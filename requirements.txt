@@ -1,0 +1,6 @@
+agno
+openai
+httpx
+python-dotenv
+ddgs
+fastapi
