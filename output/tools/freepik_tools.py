@@ -1,3 +1,12 @@
+"""
+Freepik image search toolkit.
+
+Wraps the Freepik REST API to search for stock photos by query.
+Used by the Image Agent to find relevant images for articles.
+
+API docs: https://docs.freepik.com/
+"""
+
 import json
 
 import httpx
@@ -12,7 +21,8 @@ class FreepikTools(Toolkit):
         super().__init__(name="freepik_tools", tools=[self.search_images])
 
     def search_images(self, query: str, max_results: int = 5) -> str:
-        """Search Freepik for stock images matching a query. Returns JSON list of image results with URLs and descriptions."""
+        """Search Freepik for stock images matching a query.
+        Returns JSON list of image results with URLs and descriptions."""
         try:
             response = httpx.get(
                 f"{self.base_url}/resources",

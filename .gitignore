@@ -17,8 +17,15 @@ env/
 .vscode/
 .idea/
 
-# Output
-output/*.md
+# Generated articles
+content/*.md
+
+# Database
+*.db
+
+# Jupyter
+.ipynb_checkpoints/
+lessons/**/.ipynb_checkpoints/
 
 # OS
 .DS_Store

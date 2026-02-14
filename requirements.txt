@@ -1,6 +1,9 @@
 agno
 openai
+anthropic
+sqlalchemy
 httpx
 python-dotenv
 ddgs
 fastapi
+jupyter
