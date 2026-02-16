@@ -16,7 +16,7 @@ python output/cli.py status --article <id>               # View article details
 python output/cli.py status --filter <status>            # Filter by status
 python output/cli.py history <id>                        # View article version history
 python -m pip install -r requirements.txt                # Install dependencies (pip not on PATH)
-jupyter notebook lessons/                                # Open teaching notebooks
+jupyter notebook lessons_en/                             # Open teaching notebooks (English)
 ```
 
 ## Architecture
@@ -52,19 +52,28 @@ SQLite (`workspace.db`), auto-created on import in the `output/` directory. No O
 
 Custom toolkits inherit `agno.tools.Toolkit`, pass function refs to `super().__init__(name=..., tools=[...])`. All tool functions return JSON strings. Workspace tools (`output/workspace_tools.py`) are plain Python functions passed directly as `tools=[...]` to team members.
 
-### Teaching curriculum (`lessons/`)
+### Teaching curriculum (`lessons_en/` and `lessons_vi/`)
 
-14 Jupyter notebooks (English) across 4 modules. Module 1 (Python basics) needs no API keys. Modules 2-4 progressively build the product.
+20 Jupyter notebooks across 6 modules, available in English (`lessons_en/`) and Vietnamese (`lessons_vi/`). Modules 1-2 (Python basics + AI fundamentals) need no API keys. Modules 3-5 progressively build the product. Module 6 teaches AI-assisted development with Claude Code.
 
 ## Project structure
 
 ```
 agentic-content-seo/
-├── lessons/                    ← Teaching curriculum (14 English notebooks)
+├── lessons_en/                 ← Teaching curriculum (20 English notebooks)
 │   ├── 01-python-basics/       (01-04: no API keys needed)
-│   ├── 02-ai-agents/           (05-08: needs ANTHROPIC_API_KEY)
-│   ├── 03-seo-pipeline/        (09-11: builds the real pipeline)
-│   └── 04-making-it-real/      (12-14: database, CLI, chat)
+│   ├── 02-understanding-ai/    (05-07: no API keys needed, LLM concepts)
+│   ├── 03-building-agents/     (08-12: needs ANTHROPIC_API_KEY)
+│   ├── 04-seo-pipeline/        (13-15: builds the real pipeline)
+│   ├── 05-complete-product/    (16-18: database, CLI, chat)
+│   └── 06-ai-assisted-dev/     (19-20: Claude Code, extending the product)
+├── lessons_vi/                 ← Vietnamese translation (same 20 notebooks)
+│   ├── 01-python-co-ban/
+│   ├── 02-hieu-ve-ai/
+│   ├── 03-xay-dung-agent/
+│   ├── 04-seo-pipeline/
+│   ├── 05-san-pham-hoan-chinh/
+│   └── 06-phat-trien-voi-ai/
 ├── output/                     ← The finished product (all Python code)
 │   ├── agents/                 ← AI agents and their data models
 │   │   ├── __init__.py         Re-exports agent instances and schemas

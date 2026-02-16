@@ -4,7 +4,7 @@ An AI-powered SEO content pipeline that researches topics, creates outlines, wri
 
 Built with [Agno](https://github.com/agno-agi/agno), powered by Claude (Anthropic) and Grok (xAI).
 
-This repo is also a **teaching project** — the `lessons/` folder contains 14 Jupyter notebooks that walk non-tech learners from Python basics to building the full pipeline.
+This repo is also a **teaching project** — the `lessons_en/` folder contains 20 Jupyter notebooks across 6 modules that walk non-tech learners from Python basics to building the full pipeline and extending it with AI-assisted development. A complete **Vietnamese translation** is available in `lessons_vi/`.
 
 ## Setup
 
@@ -52,30 +52,44 @@ python output/cli.py status --filter review
 python output/cli.py history 3
 ```
 
-## Teaching Curriculum (`lessons/`)
+## Teaching Curriculum (`lessons_en/`)
 
-14 Jupyter notebooks (English) across 4 modules. Start with Module 1 (no API keys needed).
+20 Jupyter notebooks (English) across 6 modules. Start with Module 1 (no API keys needed).
 
 | Module | Topic | Notebooks |
 |--------|-------|-----------|
 | **01 - Python Basics** | Variables, lists, dicts, functions, packages | 01-04 |
-| **02 - AI Agents** | First agent, tools, structured output, chaining | 05-08 |
-| **03 - SEO Pipeline** | Research, outline, writer, images, full pipeline | 09-11 |
-| **04 - Making It Real** | Database, CLI, chat interface | 12-14 |
+| **02 - Understanding AI** | How LLMs work, prompts & context, model choices | 05-07 |
+| **03 - Building Agents** | First agent, tools, structured output, chaining, mini pipeline | 08-12 |
+| **04 - SEO Pipeline** | Research, outline, writer, images, full pipeline | 13-15 |
+| **05 - Complete Product** | Database, CLI, chat interface | 16-18 |
+| **06 - AI-Assisted Dev** | Claude Code basics, extending the product | 19-20 |
 
 ```bash
 python -m pip install jupyter
-jupyter notebook lessons/
+jupyter notebook lessons_en/
+# Or for Vietnamese:
+jupyter notebook lessons_vi/
 ```
 
 ## Project Structure
 
 ```
-lessons/                    Teaching curriculum (14 English notebooks)
+lessons_en/                 Teaching curriculum (20 English notebooks)
   01-python-basics/
-  02-ai-agents/
-  03-seo-pipeline/
-  04-making-it-real/
+  02-understanding-ai/
+  03-building-agents/
+  04-seo-pipeline/
+  05-complete-product/
+  06-ai-assisted-dev/
+
+lessons_vi/                 Giáo trình tiếng Việt (20 Vietnamese notebooks)
+  01-python-co-ban/
+  02-hieu-ve-ai/
+  03-xay-dung-agent/
+  04-seo-pipeline/
+  05-san-pham-hoan-chinh/
+  06-phat-trien-voi-ai/
 
 output/                     The finished product (all Python code)
   agents/                   AI agents and their data models
