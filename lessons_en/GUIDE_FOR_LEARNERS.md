@@ -51,11 +51,22 @@ Create a file called `.env` in the project root (same folder as `README.md`):
 ```
 ANTHROPIC_API_KEY=your_key_here
 XAI_API_KEY=your_key_here
+AIRTABLE_PAT=your_airtable_personal_access_token_here
 ```
 
-Ask your teacher for the API keys if you don't have them.
+Ask your teacher for the API keys if you don't have them. For Airtable, get a Personal Access Token at [airtable.com/create/tokens](https://airtable.com/create/tokens).
 
-### Step 3: Verify your setup
+### Step 3: Set up Airtable
+
+Airtable is used to store articles and track their status. Run this once to create the tables:
+
+```bash
+python output/tools/airtable.py
+```
+
+Add the printed `AIRTABLE_BASE_ID` to your `.env` file.
+
+### Step 4: Verify your setup
 
 Open a terminal and run:
 
@@ -67,7 +78,7 @@ python -c "from dotenv import load_dotenv; load_dotenv(); import os; key=os.gete
 
 All three should print OK / "API key found". If not, ask your teacher before continuing.
 
-### Step 4: Open Jupyter
+### Step 5: Open Jupyter
 
 ```bash
 jupyter notebook lessons_en/
@@ -134,11 +145,11 @@ Needs both API keys for creating articles. Status/history commands are free.
 
 | Lesson | Topic | Time |
 |--------|-------|------|
-| 16 | Database and SQL basics | 45 min |
-| 17 | Command line interface | 20 min |
+| 16 | Airtable database layer | 45 min |
+| 17 | How everything connects | 20 min |
 | 18 | Chat interface (Agno Team) | 30 min |
 
-After Module 5 you can: use the complete product via CLI or chat, and understand how all pieces connect.
+After Module 5 you can: use the complete product via chat, and understand how all pieces connect.
 
 ### Module 6: AI-Assisted Development (lessons 19-20)
 
@@ -250,24 +261,19 @@ You now understand the full system. Here's how the lesson code maps to the produ
 | Lesson | Builds toward | Production file |
 |--------|---------------|-----------------|
 | 05-07 | LLM understanding, prompts, model choices | (Informs all design decisions) |
-| 08-09 | Agent creation, tools | `output/agents/builders.py` |
+| 08-09 | Agent creation, tools | `output/agents/researcher.py` |
 | 10, 13 | Pydantic schemas | `output/agents/schemas.py` |
 | 11-12, 13-15 | Agent chaining, pipeline | `output/pipeline.py` |
-| 16 | Database layer | `output/db.py` |
-| 17 | CLI interface | `output/cli.py` |
-| 18 | Chat interface, workspace tools | `output/chat.py`, `output/workspace_tools.py` |
+| 14 | Writer + image agents | `output/agents/writer.py`, `output/agents/image.py` |
+| 16 | Airtable database layer | `output/tools/airtable.py` |
+| 17 | How everything connects | All files in `output/` |
+| 18 | Chat interface, workspace tools | `output/agents/team.py`, `output/tools/workspace.py` |
 | 19-20 | AI-assisted development | `CLAUDE.md` (the blueprint for Claude Code) |
 
 To start using the product:
 
 ```bash
-# Create an article
-python output/cli.py create "Your topic here"
-
-# Check status
-python output/cli.py status
-
-# Or use the chat interface
+# Use the chat interface
 python output/chat.py
 ```
 
@@ -289,5 +295,5 @@ claude
 | `python` command not found | Try `python3` instead, or check that Python is installed and on your PATH. |
 | Jupyter won't start | Run `python -m pip install jupyter` then `jupyter notebook lessons_en/` |
 | Cell runs forever (>2 minutes) | The agent might be waiting for a web search. Click the stop button (square icon) and try again. DuckDuckGo sometimes rate-limits. |
-| `Error: status -> error` when creating article | Check `python output/cli.py status --article <id>` to see the error message. Usually an API key issue. |
+| `Error: status -> error` when creating article | Ask the chat interface to check the article status to see the error message. Usually an API key issue. |
 | `sys.path.insert` not working | Make sure you're running the notebook from the correct directory. Jupyter should be launched from the project root. |

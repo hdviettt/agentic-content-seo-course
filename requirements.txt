@@ -7,3 +7,4 @@ python-dotenv
 ddgs
 fastapi
 jupyter
+pyairtable

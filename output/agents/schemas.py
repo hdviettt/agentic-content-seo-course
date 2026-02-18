@@ -1,18 +1,8 @@
 """
-Pydantic models -- shared data contracts between agents.
-
-These models serve two purposes:
-1. Structured output schemas -- when passed to an Agno agent via output_schema,
-   the LLM returns validated JSON matching our exact structure.
-2. Data transfer objects -- passed between pipeline steps as typed objects.
+Pydantic schemas -- structured output contracts between pipeline agents.
 """
 
 from pydantic import BaseModel, Field
-
-
-# ============================================================
-# Content Pipeline -- used by outline, writer, and image agents
-# ============================================================
 
 
 class OutlineSection(BaseModel):
@@ -30,7 +20,7 @@ class OutlineSection(BaseModel):
 
 
 class ContentOutline(BaseModel):
-    """Full article outline -- the output_schema for the Research & Outline agent."""
+    """Full article outline -- the output_schema for the Outline agent."""
     title: str = Field(..., description="SEO-optimized article title")
     meta_description: str = Field(
         ..., description="Meta description, max 160 chars"
@@ -58,7 +48,7 @@ class ImageSuggestion(BaseModel):
 
 
 class EnrichedContent(BaseModel):
-    """Final article with images -- the output_schema for the Image Enrichment agent."""
+    """Final article with images -- the output_schema for the Image agent."""
     markdown_content: str = Field(
         ..., description="Full article in Markdown with images inserted"
     )

@@ -16,7 +16,8 @@ Tài liệu này giúp bạn giảng dạy chương trình Agentic Content SEO m
 1. **Cài đặt Python 3.12+** trên mọi máy
 2. **Cài sẵn tất cả package**: `python -m pip install -r requirements.txt`
 3. **Phân phối API key** — tạo file `.env` dùng chung hoặc cấp key riêng cho từng học viên
-4. **Chạy thử toàn bộ pipeline** trên ít nhất một máy: `python output/cli.py create "test article"` — để xác nhận mọi API key đều hoạt động
+4. **Thiết lập Airtable**: mỗi học viên cần `AIRTABLE_PAT` trong `.env`, sau đó chạy `python output/tools/airtable.py` để tạo các bảng
+5. **Chạy thử toàn bộ pipeline** trên ít nhất một máy: chạy `python output/chat.py` và yêu cầu tạo bài viết thử — để xác nhận mọi API key và Airtable đều hoạt động
 5. **Mở Jupyter** và kiểm tra notebook load được: `jupyter notebook lessons_vi/`
 
 ### Kế hoạch chi phí API
@@ -38,7 +39,7 @@ Với lớp 10 người: ngân sách khoảng $30-100 chi phí API. Mô-đun 4 t
 - Ở Mô-đun 3, yêu cầu học viên chỉ chạy mỗi cell demo một lần (không chạy lại)
 - Ở bài 14, cell writer agent mất 1-2 phút và tốn khoảng $0.50-1 mỗi lần chạy. Nên cân nhắc demo trực tiếp thay vì để mọi học viên tự chạy
 - Ở bài 15, mỗi lần chạy full pipeline tốn khoảng $1-3. Bạn có thể demo một lần rồi để học viên đọc kết quả
-- Mô-đun 5 bài 17-18 không cần tạo bài viết mới — lệnh `status` và `history` hoàn toàn miễn phí
+- Mô-đun 5 bài 17-18 không cần tạo bài viết mới — truy vấn trạng thái và lịch sử hoàn toàn miễn phí
 
 ### Kiến thức nền tảng của học viên
 
@@ -76,8 +77,8 @@ Với lớp 10 người: ngân sách khoảng $30-100 chi phí API. Mô-đun 4 t
 | Phiên | Bài học | Thời lượng | Ghi chú |
 |-------|---------|----------|-------|
 | Sáng 1 | 15 | 45 phút | Full pipeline. Có thể demo một lần thay vì để tất cả học viên chạy. |
-| Sáng 2 | 16 | 60 phút | Database. Thực hành SQL với in-memory DB an toàn và miễn phí. |
-| Chiều 1 | 17-18 | 60 phút | CLI + chat. Demo trực tiếp cả hai. Cho học viên thử lệnh CLI. |
+| Sáng 2 | 16 | 60 phút | Database. Thực hành Airtable API, an toàn và miễn phí. |
+| Chiều 1 | 17-18 | 60 phút | Cách mọi thứ kết nối + chat. Demo trực tiếp. Cho học viên thử giao diện chat. |
 | Chiều 2 | 19-20 | 90 phút | Cơ bản Claude Code + mở rộng sản phẩm. |
 | Tổng kết | — | 30 phút | Duyệt qua toàn bộ cấu trúc thư mục `output/`. Hỏi đáp. |
 
@@ -215,26 +216,23 @@ print(create_seo_title("technical seo"))
 - **Tốc độ**: Nhanh cho phần nội dung bài học. Chậm cho phần thảo luận "ngấm dần".
 - **Khoảnh khắc giảng dạy then chốt**: Cho xem sơ đồ pipeline (queued -> researching -> ... -> review) và kết nối với mọi thứ đã học.
 - **Chi phí**: Khoảng $1-3 mỗi lần chạy full pipeline. **Khuyến nghị mạnh mẽ nên demo một lần** thay vì để tất cả học viên chạy.
-- **Sau khi chạy**: Mở `output/cli.py status` trong terminal để cho thấy bài viết trong database. Sau đó mở file `.md` đã tạo. Điều này kết nối notebook với sản phẩm thực.
+- **Sau khi chạy**: Dùng giao diện chat (`python output/chat.py`) để kiểm tra trạng thái bài viết. Sau đó mở file `.md` đã tạo. Điều này kết nối notebook với sản phẩm thực.
 - **sys.path.insert**: Học viên đã thấy pattern này ở Bài 12. Chỉ cần lưu ý: "Cùng pattern như mini pipeline."
 
-### Bài học 16: Database
+### Bài học 16: Database (Airtable)
 
-- **Tốc độ**: Chậm. SQL hoàn toàn mới với đa số học viên.
-- **An toàn để thử nghiệm**: Database trong bộ nhớ (`":memory:"`) biến mất khi cell chạy xong. Học viên không thể phá hỏng gì. Khuyến khích thử nghiệm.
-- **Khoảnh khắc quan trọng**: Khi họ truy vấn với `WHERE status = ?` và thấy bộ lọc hoạt động. Kết nối: "Đây là những gì `cli.py status --filter review` làm phía sau."
-- **Cần dạy**: Ký tự `?` placeholder cho bảo mật (SQL injection). Chỉ cần đề cập qua cũng đủ gieo mầm nhận thức.
-- **Nửa sau** sử dụng module `db.py` thực. Điều này tạo bản ghi thực trong `workspace.db`. Giải thích sự khác biệt.
+- **Tốc độ**: Chậm. Khái niệm database hoàn toàn mới với đa số học viên.
+- **An toàn để thử nghiệm**: Airtable có giao diện trực quan nên học viên có thể nhìn thấy dữ liệu ngay lập tức. Khuyến khích thử nghiệm.
+- **Khoảnh khắc quan trọng**: Khi họ tạo bài viết và thấy nó xuất hiện trong Airtable. Kết nối: "Đây là những gì giao diện chat làm phía sau khi bạn yêu cầu tạo hoặc lọc bài viết."
+- **Cần dạy**: Khái niệm record ID (chuỗi như "recABC123") và cách các field Airtable ánh xạ sang Python dict.
+- **Nửa sau** sử dụng module `tools/airtable.py` thực. Điều này tạo bản ghi thực trong Airtable base của họ.
 
-### Bài học 17: CLI
+### Bài học 17: Cách Mọi Thứ Kết Nối
 
 - **Tốc độ**: Nhanh. Đây là bài ngắn.
-- **Demo trực tiếp**: Mở terminal và chạy các lệnh thực. Cho học viên làm theo:
-  - `python output/cli.py --help`
-  - `python output/cli.py status`
-  - `python output/cli.py status --article 1` (nếu đã có bài viết từ bài 15)
-- **Không chạy `create`** trong lớp trừ khi muốn tốn phí API. Cho xem lệnh nhưng giải thích chi phí.
-- **Thông điệp chính**: "CLI gọi cùng `pipeline.py` và `db.py` mà bạn đã hiểu. Nó chỉ là một cách khác để kích hoạt chúng."
+- **Thông điệp chính**: "Giao diện chat gọi cùng `pipeline.py` và `tools/airtable.py` mà bạn đã hiểu. Bài này cho thấy cách các thành phần kết nối với nhau."
+- **Demo trực tiếp**: Duyệt qua cấu trúc dự án và cho thấy cách `chat.py` gọi `tools/workspace.py` rồi gọi `pipeline.py` rồi gọi `tools/airtable.py`.
+- **Không tạo bài viết** trong lớp trừ khi muốn tốn phí API. Cho xem luồng hoạt động nhưng giải thích chi phí.
 
 ### Bài học 18: Giao Diện Chat
 
@@ -299,8 +297,8 @@ Yêu cầu học viên:
 ### Sau Mô-đun 5 (bài 18)
 
 Yêu cầu học viên:
-1. Chạy `python output/cli.py status` và giải thích kết quả
-2. Giải thích sự khác biệt giữa giao diện CLI và chat
+1. Dùng giao diện chat để kiểm tra trạng thái bài viết và giải thích kết quả
+2. Giải thích cách giao diện chat phân công nhiệm vụ cho các thành viên team chuyên biệt
 3. Kể tên 3 file trong `output/` và mô tả chức năng của mỗi file
 
 ### Sau Mô-đun 6 (bài 20)
@@ -351,10 +349,10 @@ Thay thuật ngữ chuyên ngành SEO bằng lĩnh vực của họ. Cấu trúc
 
 Sau khi hoàn thành khóa học, học viên có thể:
 
-1. **Tùy chỉnh instructions của agent** — Sửa `output/agents/builders.py` để thay đổi phong cách viết, giọng văn, hoặc cách tiếp cận SEO
-2. **Thêm target keyword** — Dùng flag `--keywords` để định hướng nội dung bài viết
-3. **Chạy tạo bài hàng loạt** — Tạo file `topics.csv` và xử lý nhiều bài viết
-4. **Giám sát chất lượng output** — Dùng `cli.py status` và review bài viết đã tạo trong `content/`
+1. **Tùy chỉnh instructions của agent** — Sửa `output/agents/writer.py` để thay đổi phong cách viết, hoặc bất kỳ file agent nào trong `output/agents/` để điều chỉnh hành vi
+2. **Thêm target keyword** — Cung cấp keyword khi tạo bài viết qua giao diện chat
+3. **Chạy tạo bài hàng loạt** — Tạo file `topics.csv` và xử lý nhiều bài viết qua giao diện chat
+4. **Giám sát chất lượng output** — Dùng giao diện chat để kiểm tra trạng thái và review bài viết đã tạo trong `content/`
 
 Cho học viên muốn đi sâu hơn (sử dụng Claude Code):
 1. Thêm tool mới cho agent (ví dụ: Google Search Console API)

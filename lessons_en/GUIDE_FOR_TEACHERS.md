@@ -16,7 +16,8 @@ This guide helps you teach the Agentic Content SEO curriculum effectively. It co
 1. **Install Python 3.12+** on every machine
 2. **Pre-install all packages**: `python -m pip install -r requirements.txt`
 3. **Distribute API keys** — create a shared `.env` file or give each student their own keys
-4. **Test the full pipeline** on at least one machine: `python output/cli.py create "test article"` — this confirms all API keys work
+4. **Set up Airtable**: each student needs `AIRTABLE_PAT` in `.env`, then run `python output/tools/airtable.py` to create the tables
+5. **Test the full pipeline** on at least one machine: run `python output/chat.py` and ask it to create a test article — this confirms all API keys and Airtable work
 5. **Open Jupyter** and verify notebooks load: `jupyter notebook lessons_en/`
 
 ### API cost planning
@@ -38,7 +39,7 @@ For a class of 10: budget $30-100 in API costs. Module 4 is the most expensive p
 - In Module 3, have students run each demo cell only once (no re-runs)
 - In lesson 14, the writer agent cell takes 1-2 minutes and costs ~$0.50-1 per run. Consider running it as a live demo rather than having every student run it
 - In lesson 15, the full pipeline run costs ~$1-3. You can demo this once and let students just read the output
-- Module 5 lessons 17-18 don't need to create new articles — `status` and `history` commands are free
+- Module 5 lessons 17-18 don't need to create new articles — status and history queries are free
 
 ### What learners should already know
 
@@ -76,8 +77,8 @@ For a class of 10: budget $30-100 in API costs. Module 4 is the most expensive p
 | Block | Lessons | Duration | Notes |
 |-------|---------|----------|-------|
 | Morning 1 | 15 | 45 min | Full pipeline. Can demo once instead of all students running. |
-| Morning 2 | 16 | 60 min | Database. Hands-on SQL in in-memory DB is safe and free. |
-| Afternoon 1 | 17-18 | 60 min | CLI + chat. Demo both live. Let students try CLI commands. |
+| Morning 2 | 16 | 60 min | Database. Hands-on Airtable API is safe and free. |
+| Afternoon 1 | 17-18 | 60 min | How everything connects + chat. Demo live. Let students try the chat interface. |
 | Afternoon 2 | 19-20 | 90 min | Claude Code basics + extending the product. |
 | Wrap-up | — | 30 min | Full walkthrough of `output/` folder structure. Q&A. |
 
@@ -215,26 +216,23 @@ print(create_seo_title("technical seo"))
 - **Pace**: Fast for the lesson itself. Slow for the "soak it in" discussion.
 - **Critical teaching moment**: Show the pipeline diagram (queued → researching → ... → review) and connect it to everything they've learned.
 - **Cost**: ~$1-3 per full pipeline run. **Strongly recommend demoing once** rather than having all students run.
-- **After running**: Pull up `output/cli.py status` in a terminal to show the article in the database. Then open the generated `.md` file. This connects the notebook to the real product.
+- **After running**: Use the chat interface (`python output/chat.py`) to check the article status. Then open the generated `.md` file. This connects the notebook to the real product.
 - **sys.path.insert**: Students already saw this in Lesson 12. Just note: "Same pattern as the mini pipeline."
 
-### Lesson 16: Database
+### Lesson 16: Database (Airtable)
 
-- **Pace**: Slow. SQL is completely new for most.
-- **Safe to experiment**: The in-memory database (`":memory:"`) disappears when the cell finishes. Students can't break anything. Encourage experimentation.
-- **Key moment**: When they query with `WHERE status = ?` and see filtering work. Connect to: "This is what `cli.py status --filter review` does under the hood."
-- **Teach**: The `?` placeholder for security (SQL injection). Even a brief mention plants the seed.
-- **The second half** uses the real `db.py` module. This creates actual records in `workspace.db`. Explain the difference.
+- **Pace**: Slow. Database concepts are new for most.
+- **Safe to experiment**: Airtable has a visual UI so students can see their data immediately. Encourage experimentation.
+- **Key moment**: When they create an article and see it appear in Airtable. Connect to: "This is what the chat interface does under the hood when you ask it to create or filter articles."
+- **Teach**: The concept of record IDs (strings like "recABC123") and how Airtable fields map to Python dicts.
+- **The second half** uses the real `tools/airtable.py` module. This creates actual records in their Airtable base.
 
-### Lesson 17: CLI
+### Lesson 17: How Everything Connects
 
 - **Pace**: Fast. This is a short lesson.
-- **Live demo**: Open a terminal and run real commands. Let students follow along:
-  - `python output/cli.py --help`
-  - `python output/cli.py status`
-  - `python output/cli.py status --article 1` (if an article exists from lesson 15)
-- **Don't run `create`** in class unless you want to spend API money. Show the command but explain the cost.
-- **Key message**: "The CLI calls the same `pipeline.py` and `db.py` you already understand. It's just a different way to trigger them."
+- **Key message**: "The chat interface calls the same `pipeline.py` and `tools/airtable.py` you already understand. This lesson shows how all the pieces fit together."
+- **Live demo**: Walk through the project structure and show how `chat.py` calls `tools/workspace.py` which calls `pipeline.py` which calls `tools/airtable.py`.
+- **Don't create articles** in class unless you want to spend API money. Show the flow but explain the cost.
 
 ### Lesson 18: Chat Interface
 
@@ -299,8 +297,8 @@ Ask students to:
 ### After Module 5 (lesson 18)
 
 Ask students to:
-1. Run `python output/cli.py status` and explain the output
-2. Explain the difference between the CLI and chat interface
+1. Use the chat interface to check article status and explain the output
+2. Explain how the chat interface delegates tasks to specialized team members
 3. Name 3 files in `output/` and describe what each does
 
 ### After Module 6 (lesson 20)
@@ -351,10 +349,10 @@ Replace SEO-specific terminology with their domain. The pipeline structure (rese
 
 After completing the course, learners can:
 
-1. **Customize agent instructions** — Edit `output/agents/builders.py` to change writing style, tone, or SEO approach
-2. **Add target keywords** — Use `--keywords` flag to steer article content
-3. **Run batch generation** — Create a `topics.csv` and process multiple articles
-4. **Monitor output quality** — Use `cli.py status` and review generated articles in `content/`
+1. **Customize agent instructions** — Edit `output/agents/writer.py` to change writing style, or any agent file in `output/agents/` to adjust behavior
+2. **Add target keywords** — Provide keywords when creating articles via the chat interface
+3. **Run batch generation** — Create a `topics.csv` and process multiple articles via the chat interface
+4. **Monitor output quality** — Use the chat interface to check status and review generated articles in `content/`
 
 For learners who want to go deeper (using Claude Code):
 1. Add a new tool to an agent (e.g., Google Search Console API)
