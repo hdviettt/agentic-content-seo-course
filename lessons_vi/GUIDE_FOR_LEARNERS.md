@@ -127,40 +127,31 @@ Cần `ANTHROPIC_API_KEY`. Mỗi cell gọi agent tốn một khoản nhỏ (~$0
 
 Sau Mô-đun 3 bạn có thể: tạo agent AI, trang bị tools, bắt agent trả dữ liệu có cấu trúc, nối chuỗi chúng lại, và xây dựng một pipeline 3 agent hoàn chỉnh với nested schema.
 
-### Mô-đun 4: Pipeline SEO thực tế (bài 13-15)
+### Mô-đun 4: Xây dựng sản phẩm (bài 13-16)
 
-Cần `ANTHROPIC_API_KEY` + `XAI_API_KEY`. Chạy một pipeline đầy đủ tốn khoảng ~$1-3 tiền API.
-
-| Bài học | Chủ đề | Thời lượng |
-|---------|--------|------------|
-| 13 | Agent Research + Outline (code thật) | 45 phút |
-| 14 | Agent Writer + Image (code thật) | 45 phút |
-| 15 | Chạy toàn bộ pipeline end-to-end | 30 phút |
-
-Sau Mô-đun 4 bạn có thể: chạy pipeline tạo nội dung đầy đủ và hiểu từng agent đóng góp vai trò gì.
-
-### Mô-đun 5: Sản phẩm hoàn chỉnh (bài 16-18)
-
-Cần cả hai API key để tạo bài viết. Các lệnh xem trạng thái/lịch sử thì miễn phí.
+Bài 13 (Claude Code) không cần API key. Bài 14-16 cần `ANTHROPIC_API_KEY` + `XAI_API_KEY`. Chạy một pipeline đầy đủ tốn khoảng ~$1-3 tiền API.
 
 | Bài học | Chủ đề | Thời lượng |
 |---------|--------|------------|
-| 16 | Airtable database layer | 45 phút |
-| 17 | Cách mọi thứ kết nối | 20 phút |
-| 18 | Giao diện chat (Agno Team) | 30 phút |
+| 13 | Cơ bản về Claude Code (cài đặt, CLAUDE.md, quy trình làm việc) | 45 phút |
+| 14 | Agent Research + Outline (code thật) | 45 phút |
+| 15 | Agent Writer + Image (code thật) | 45 phút |
+| 16 | Chạy toàn bộ pipeline end-to-end | 30 phút |
 
-Sau Mô-đun 5 bạn có thể: sử dụng sản phẩm hoàn chỉnh qua chat, và hiểu cách các thành phần kết nối với nhau.
+Sau Mô-đun 4 bạn có thể: dùng Claude Code để điều hướng codebase, chạy pipeline tạo nội dung đầy đủ, và hiểu từng agent đóng góp vai trò gì.
 
-### Mô-đun 6: Phát triển cùng AI (bài 19-20)
+### Mô-đun 5: Sản phẩm hoàn chỉnh (bài 17-20)
 
-Không cần API key. Lý thuyết kết hợp hướng dẫn thực hành.
+Cần cả hai API key để tạo bài viết. Các lệnh xem trạng thái/lịch sử thì miễn phí. Bài 20 không cần API key.
 
 | Bài học | Chủ đề | Thời lượng |
 |---------|--------|------------|
-| 19 | Cơ bản về Claude Code (cài đặt, CLAUDE.md, quy trình làm việc) | 45 phút |
+| 17 | Airtable database layer | 45 phút |
+| 18 | Cách mọi thứ kết nối | 20 phút |
+| 19 | Giao diện chat (Agno Team) | 30 phút |
 | 20 | Mở rộng sản phẩm (thêm agent kiểm duyệt nội dung) | 50 phút |
 
-Sau Mô-đun 6 bạn có thể: sử dụng Claude Code để mở rộng và chỉnh sửa sản phẩm, kiểm chứng code do AI sinh ra bằng kiến thức từ tất cả bài học trước, và điều hướng AI xây tính năng cho mình.
+Sau Mô-đun 5 bạn có thể: sử dụng sản phẩm hoàn chỉnh qua chat, hiểu cách các thành phần kết nối với nhau, và dùng Claude Code để mở rộng và chỉnh sửa sản phẩm.
 
 ## Bảng thuật ngữ chính
 

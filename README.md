@@ -4,7 +4,7 @@ An AI-powered SEO content pipeline that researches topics, creates outlines, wri
 
 Built with [Agno](https://github.com/agno-agi/agno), powered by Claude (Anthropic) and Grok (xAI).
 
-This repo is also a **teaching project** — the `lessons_en/` folder contains 20 Jupyter notebooks across 6 modules that walk non-tech learners from Python basics to building the full pipeline and extending it with AI-assisted development. A complete **Vietnamese translation** is available in `lessons_vi/`.
+This repo is also a **teaching project** — the `lessons_en/` folder contains 20 Jupyter notebooks across 5 modules that walk non-tech learners from Python basics to building and extending the full pipeline. A complete **Vietnamese translation** is available in `lessons_vi/`.
 
 ## Setup
 
@@ -40,16 +40,15 @@ The chat interface is the primary way to use the product — an AI team that cre
 
 ## Teaching Curriculum (`lessons_en/`)
 
-20 Jupyter notebooks (English) across 6 modules. Start with Module 1 (no API keys needed).
+20 Jupyter notebooks (English) across 5 modules. Start with Module 1 (no API keys needed).
 
 | Module | Topic | Notebooks |
 |--------|-------|-----------|
 | **01 - Python Basics** | Variables, lists, dicts, functions, packages | 01-04 |
 | **02 - Understanding AI** | How LLMs work, prompts & context, model choices | 05-07 |
 | **03 - Building Agents** | First agent, tools, structured output, chaining, mini pipeline | 08-12 |
-| **04 - SEO Pipeline** | Research, outline, writer, images, full pipeline | 13-15 |
-| **05 - Complete Product** | Airtable database, how everything connects, chat interface | 16-18 |
-| **06 - AI-Assisted Dev** | Claude Code basics, extending the product | 19-20 |
+| **04 - Building the Product** | Claude Code, research, outline, writer, images, full pipeline | 13-16 |
+| **05 - Complete Product** | Airtable database, how everything connects, chat interface, extending | 17-20 |
 
 ```bash
 python -m pip install jupyter
@@ -85,9 +84,8 @@ lessons_en/                 Teaching curriculum (20 English notebooks)
   01-python-basics/         Lessons 01-04 (no API keys needed)
   02-understanding-ai/      Lessons 05-07 (no API keys needed)
   03-building-agents/       Lessons 08-12 (needs ANTHROPIC_API_KEY)
-  04-seo-pipeline/          Lessons 13-15 (builds the real pipeline)
-  05-complete-product/      Lessons 16-18 (Airtable, connections, chat)
-  06-ai-assisted-dev/       Lessons 19-20 (Claude Code, extending)
+  04-building-the-product/  Lessons 13-16 (Claude Code, builds the real pipeline)
+  05-complete-product/      Lessons 17-20 (Airtable, connections, chat, extending)
 
 lessons_vi/                 Vietnamese translation (same 20 notebooks)
 

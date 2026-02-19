@@ -4,7 +4,7 @@ Tài liệu này giúp bạn giảng dạy chương trình Agentic Content SEO m
 
 ## Tổng quan khóa học
 
-- **20 bài học** chia thành 6 mô-đun
+- **20 bài học** chia thành 5 mô-đun
 - **Đối tượng**: Nhân sự phi kỹ thuật (marketing, SEO, content) chưa có kinh nghiệm lập trình
 - **Tổng thời lượng**: 12-14 giờ giảng dạy, lý tưởng nhất là chia thành 3 ngày
 - **Mục tiêu**: Học viên hiểu cách pipeline tạo nội dung bằng AI hoạt động, có thể chạy và đọc code, đồng thời sử dụng Claude Code để mở rộng và chỉnh sửa hệ thống
@@ -29,15 +29,14 @@ Tài liệu này giúp bạn giảng dạy chương trình Agentic Content SEO m
 | Mô-đun 3 (bài 8-12) | $0.75-1.50 (gọi Sonnet, mini pipeline) |
 | Mô-đun 4 (bài 13-15) | $2-5 (Sonnet + Grok, full pipeline) |
 | Mô-đun 5 (bài 16-18) | $0-3 (DB miễn phí, tạo bài viết tốn phí) |
-| Mô-đun 6 (bài 19-20) | $0 (không gọi API) |
 | **Tổng mỗi học viên** | **$3-10** |
 
 Với lớp 10 người: ngân sách khoảng $30-100 chi phí API. Mô-đun 4 tốn kém nhất vì bài 15 chạy toàn bộ pipeline 4 agent.
 
 **Mẹo kiểm soát chi phí:**
-- Mô-đun 1, 2 và 6 hoàn toàn miễn phí — không gọi API
+- Mô-đun 1 và 2 hoàn toàn miễn phí — không gọi API. Bài 13 (Claude Code) và Bài 20 (Mở rộng) cũng miễn phí
 - Ở Mô-đun 3, yêu cầu học viên chỉ chạy mỗi cell demo một lần (không chạy lại)
-- Ở bài 14, cell writer agent mất 1-2 phút và tốn khoảng $0.50-1 mỗi lần chạy. Nên cân nhắc demo trực tiếp thay vì để mọi học viên tự chạy
+- Ở bài 15, cell writer agent mất 1-2 phút và tốn khoảng $0.50-1 mỗi lần chạy. Nên cân nhắc demo trực tiếp thay vì để mọi học viên tự chạy
 - Ở bài 15, mỗi lần chạy full pipeline tốn khoảng $1-3. Bạn có thể demo một lần rồi để học viên đọc kết quả
 - Mô-đun 5 bài 17-18 không cần tạo bài viết mới — truy vấn trạng thái và lịch sử hoàn toàn miễn phí
 
@@ -195,15 +194,23 @@ print(create_seo_title("technical seo"))
 - **Chi phí**: Khoảng $0.20-0.40 cho cả ba agent. Mất 1-2 phút.
 - **Bảng so sánh**: Dành thời gian cho bảng so sánh mini vs real pipeline. Điều này đặt kỳ vọng cho Mô-đun 4.
 
-### Bài học 13: Agent Nghiên Cứu và Dàn Ý
+### Bài học 13: Cơ Bản Claude Code
 
-- **Tốc độ**: Trung bình-chậm. Đây là code "sản phẩm thực" đầu tiên.
-- **Quan trọng**: Phần "Có Gì Khác Biệt" từ chương trình cũ đã được thay thế — bài cầu nối (12) đã xử lý khoảng cách đó. Bài 13 mở đầu bằng cách kết nối với pattern mini pipeline mà học viên đã thực hành.
+- **Pace**: Medium. Lý thuyết nhưng rất thực tế. Đây là cầu nối từ notebook sang file thật.
+- **Không tốn API** — học viên đọc file dự án và viết prompt dạng chuỗi.
+- **Key moment**: Đọc file CLAUDE.md thật. Học viên nhận ra: "Đây là system prompt cho Claude Code, giống hệt instructions cho agent."
+- **Dạy**: Quy trình 5 bước (Tìm hiểu → Kế hoạch → Triển khai → Kiểm chứng → Lặp lại). Kết nối với pipeline pattern.
+- **Bài tập**: Học viên viết prompt Claude Code cho 3 tình huống. Chấm theo tính cụ thể (đường dẫn file, vấn đề rõ ràng, ràng buộc).
+
+### Bài học 14: Agent Nghiên Cứu và Dàn Ý
+
+- **Pace**: Medium-slow. Đây là code production đầu tiên.
+- **Quan trọng**: Bài cầu nối (12) đã xử lý khoảng cách từ mini pipeline sang production. Bài 14 mở đầu bằng cách kết nối với pattern mini pipeline mà học viên đã thực hành.
 - **Khoảnh khắc quan trọng**: Schema `ContentOutline` đầy đủ với `OutlineSection` lồng nhau. Học viên nên nhận ra pattern từ Bài 12.
 - **Chi phí**: Chạy cell này tốn khoảng $0.10-0.20 (Sonnet cho nghiên cứu + dàn ý).
 - **Cần thời gian**: Cell chạy thử mất 30-60 giây. Báo trước cho học viên.
 
-### Bài học 14: Agent Viết Bài và Hình Ảnh
+### Bài học 15: Agent Viết Bài và Hình Ảnh
 
 - **Tốc độ**: Trung bình.
 - **Khoảnh khắc quan trọng**: Giải thích TẠI SAO dùng các model khác nhau. Học viên đã hiểu các đánh đổi từ Bài 7 — giờ họ thấy nó được áp dụng thực tế.
@@ -211,7 +218,7 @@ print(create_seo_title("technical seo"))
 - **Chi phí**: Cell writer tốn khoảng $0.50-1 mỗi lần chạy (Grok cho bài viết dài). Nên cân nhắc demo một lần thay vì để tất cả học viên chạy.
 - **Agent hình ảnh**: Vì đa số học viên không có image API key, bài 14 chỉ trình bày khái niệm. Điều này hoàn toàn ổn.
 
-### Bài học 15: Full Pipeline
+### Bài học 16: Full Pipeline
 
 - **Tốc độ**: Nhanh cho phần nội dung bài học. Chậm cho phần thảo luận "ngấm dần".
 - **Khoảnh khắc giảng dạy then chốt**: Cho xem sơ đồ pipeline (queued -> researching -> ... -> review) và kết nối với mọi thứ đã học.
@@ -219,7 +226,7 @@ print(create_seo_title("technical seo"))
 - **Sau khi chạy**: Dùng giao diện chat (`python output/chat.py`) để kiểm tra trạng thái bài viết. Sau đó mở file `.md` đã tạo. Điều này kết nối notebook với sản phẩm thực.
 - **sys.path.insert**: Học viên đã thấy pattern này ở Bài 12. Chỉ cần lưu ý: "Cùng pattern như mini pipeline."
 
-### Bài học 16: Database (Airtable)
+### Bài học 17: Database (Airtable)
 
 - **Tốc độ**: Chậm. Khái niệm database hoàn toàn mới với đa số học viên.
 - **An toàn để thử nghiệm**: Airtable có giao diện trực quan nên học viên có thể nhìn thấy dữ liệu ngay lập tức. Khuyến khích thử nghiệm.
@@ -227,31 +234,21 @@ print(create_seo_title("technical seo"))
 - **Cần dạy**: Khái niệm record ID (chuỗi như "recABC123") và cách các field Airtable ánh xạ sang Python dict.
 - **Nửa sau** sử dụng module `tools/airtable.py` thực. Điều này tạo bản ghi thực trong Airtable base của họ.
 
-### Bài học 17: Cách Mọi Thứ Kết Nối
+### Bài học 18: Cách Mọi Thứ Kết Nối
 
 - **Tốc độ**: Nhanh. Đây là bài ngắn.
 - **Thông điệp chính**: "Giao diện chat gọi cùng `pipeline.py` và `tools/airtable.py` mà bạn đã hiểu. Bài này cho thấy cách các thành phần kết nối với nhau."
 - **Demo trực tiếp**: Duyệt qua cấu trúc dự án và cho thấy cách `chat.py` gọi `tools/workspace.py` rồi gọi `pipeline.py` rồi gọi `tools/airtable.py`.
 - **Không tạo bài viết** trong lớp trừ khi muốn tốn phí API. Cho xem luồng hoạt động nhưng giải thích chi phí.
 
-### Bài học 18: Giao Diện Chat
+### Bài học 19: Giao Diện Chat
 
-- **Tốc độ**: Trung bình.
-- **Demo trực tiếp**: Chạy `python output/chat.py` trong terminal. Gõ tin nhắn và cho học viên xem quá trình phân công của team diễn ra trực tiếp.
-- **Điểm giảng dạy chính**: Khái niệm Team — leader phân công cho các thành viên chuyên môn. Kết nối với quản lý trong thực tế.
-- **Thực hành**: Cho học viên gọi trực tiếp `list_all_articles()` và `get_article_details()` trong notebook để hiểu các thành viên team thực sự làm gì.
-- **Chuyển tiếp sang Mô-đun 6**: Dùng phần "Hoàn thành Mô-đun 5" để giới thiệu trước Claude Code. Tạo hứng thú: "Bạn đã hiểu toàn bộ hệ thống. Giờ bạn sẽ học cách mở rộng nó."
+- **Pace**: Medium.
+- **Live demo**: Chạy `python output/chat.py` trong terminal. Gõ tin nhắn và để học viên xem team delegation diễn ra.
+- **Key teaching point**: Khái niệm Team — leader ủy thác cho thành viên chuyên biệt. Kết nối với quản lý thực tế.
+- **Hands-on**: Cho học viên gọi `list_all_articles()` và `get_article_details()` trực tiếp trong notebook để hiểu team members thực sự làm gì.
 
-### Bài học 19: Cơ Bản Claude Code (MỚI)
-
-- **Tốc độ**: Trung bình. Lý thuyết nhưng rất thực tiễn.
-- **Không gọi API** — học viên đọc file dự án và viết prompt dưới dạng chuỗi.
-- **Khoảnh khắc quan trọng**: Đọc file `CLAUDE.md` thực tế. Học viên nhận ra: "Đây là system prompt cho Claude Code, giống như `instructions` là system prompt cho agent."
-- **Cần dạy**: Quy trình 5 bước (Tìm hiểu -> Lên kế hoạch -> Triển khai -> Xác minh -> Lặp lại). Kết nối với pattern pipeline.
-- **Phần MCP**: Giữ ở mức khái niệm. Điểm mấu chốt là "MCP cho Claude Code quyền truy cập tài liệu, giống như đưa cho nó sách tham khảo."
-- **Bài tập**: Học viên viết prompt Claude Code cho 3 kịch bản. Chấm điểm dựa trên tính cụ thể (đường dẫn file, vấn đề rõ ràng, ràng buộc).
-
-### Bài học 20: Mở Rộng Sản Phẩm (MỚI)
+### Bài học 20: Mở Rộng Sản Phẩm
 
 - **Tốc độ**: Trung bình-chậm. Đây là bài tổng kết.
 - **Không gọi API** — học viên truy vết những gì Claude Code sẽ thực hiện.
@@ -291,7 +288,7 @@ Yêu cầu học viên:
 
 Yêu cầu học viên:
 1. Vẽ pipeline trên giấy: 4 agent, mỗi agent làm gì, dữ liệu nào truyền giữa chúng
-2. Giải thích tại sao writer dùng Grok thay vì Claude (kết nối Bài 7 với Bài 14)
+2. Giải thích tại sao writer dùng Grok thay vì Claude (kết nối Bài 7 với Bài 15)
 3. Mô tả điều gì xảy ra trong database ở mỗi bước pipeline
 
 ### Sau Mô-đun 5 (bài 18)
@@ -301,27 +298,20 @@ Yêu cầu học viên:
 2. Giải thích cách giao diện chat phân công nhiệm vụ cho các thành viên team chuyên biệt
 3. Kể tên 3 file trong `output/` và mô tả chức năng của mỗi file
 
-### Sau Mô-đun 6 (bài 20)
-
-Yêu cầu học viên:
-1. Mô tả quy trình phát triển AI 5 bước
-2. Viết một prompt Claude Code để thêm tính năng đơn giản (ví dụ: thay đổi giọng văn của writer)
-3. Cho một schema, xác minh: model được chọn đúng chưa? Có tuân theo pattern hiện tại không?
-
 ## Ghi chú chương trình
 
 Các chủ đề sau được đề cập trong notebook. Hãy nhấn mạnh thêm bằng lời khi cần:
 
 - **Token và context window** — Bài 05 giải thích các khái niệm này. Tham chiếu khi thảo luận chi phí API.
 - **Prompt engineering** — Bài 06 đề cập kỹ lưỡng. Tham chiếu pattern 4 thành phần (Role, Task, Constraints, Examples) mỗi khi xem xét instructions của agent.
-- **Đánh đổi giữa các model** — Bài 07 xây dựng khung quyết định. Tham chiếu ở Bài 13-14 khi học viên thấy cách chọn model thực tế.
+- **Đánh đổi giữa các model** — Bài 07 xây dựng khung quyết định. Tham chiếu ở Bài 14-15 khi học viên thấy cách chọn model thực tế.
 - **JSON** — Bài 10 có phần giới thiệu JSON. Vẽ trên bảng trắng để minh họa thêm.
-- **Markdown** — Bài 14 có phần giới thiệu Markdown. Cho xem file `.md` và bản render song song.
-- **Xử lý lỗi (try/except)** — Bài 15 có giải thích đầy đủ. Hướng dẫn trên màn hình.
-- **Cầu nối nested schema** — Bài 12 giới thiệu nested schema trước code production ở Bài 13. Điều này loại bỏ vách đứng độ phức tạp của chương trình cũ.
-- **Cầu nối code production** — Bài 18 có phần "Đọc Code Production" ánh xạ bài học với các file trong `output/`.
+- **Markdown** — Bài 15 có phần giới thiệu Markdown. Cho xem file `.md` và bản render song song.
+- **Xử lý lỗi (try/except)** — Bài 16 có giải thích đầy đủ. Hướng dẫn trên màn hình.
+- **Cầu nối nested schema** — Bài 12 giới thiệu nested schema trước code production ở Bài 14. Điều này loại bỏ vách đứng độ phức tạp của chương trình cũ.
+- **Cầu nối code production** — Bài 19 có phần "Đọc Code Production" ánh xạ bài học với các file trong `output/`.
 - **Kiểm tra thiết lập** — Bài 04 kết thúc với cell kiểm tra 4 bước. Không chuyển bài cho đến khi tất cả học viên đều pass.
-- **Cảnh báo chi phí** — Bài 08, 12, 13, 14, 15 có ghi chú chi phí trước các cell tốn kém.
+- **Cảnh báo chi phí** — Bài 08, 12, 14, 15, 16 có ghi chú chi phí trước các cell tốn kém.
 
 ## Điều chỉnh khóa học
 
@@ -335,11 +325,11 @@ Bỏ qua: bài 1-4, 9, 13, 14, 16, 17, 18, 19, 20.
 
 ### Workshop 2 ngày (khoảng 8-10 giờ)
 
-Gộp Mô-đun 1-2 vào Ngày 1 (bỏ bài tập, chỉ demo). Gộp Mô-đun 3-5 vào Ngày 2 (demo pipeline và database). Bỏ Mô-đun 6 nhưng đề cập Claude Code trong phần tổng kết.
+Gộp Mô-đun 1-2 vào Ngày 1 (bỏ bài tập, chỉ demo). Gộp Mô-đun 3-5 vào Ngày 2 (demo pipeline và database). Demo Claude Code từ Bài 13 trong phần tổng kết.
 
 ### Cho lập trình viên có kinh nghiệm
 
-Bỏ hoàn toàn Mô-đun 1-2. Bắt đầu từ Mô-đun 3. Dành thêm thời gian review code — duyệt chi tiết qua các file trong `output/`. Mô-đun 6 vẫn có giá trị.
+Bỏ hoàn toàn Mô-đun 1-2. Bắt đầu từ Mô-đun 3. Dành thêm thời gian review code — duyệt chi tiết qua các file trong `output/`. Bài 20 của Mô-đun 5 vẫn có giá trị.
 
 ### Cho đội ngũ không phải SEO
 

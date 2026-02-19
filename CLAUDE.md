@@ -60,7 +60,7 @@ Custom toolkits inherit `agno.tools.Toolkit`, pass function refs to `super().__i
 
 ### Teaching curriculum (`lessons_en/` and `lessons_vi/`)
 
-20 Jupyter notebooks across 6 modules, available in English (`lessons_en/`) and Vietnamese (`lessons_vi/`). Modules 1-2 (Python basics + AI fundamentals) need no API keys. Modules 3-5 progressively build the product. Module 6 teaches AI-assisted development with Claude Code. Lesson 17 is "How Everything Connects".
+20 Jupyter notebooks across 5 modules, available in English (`lessons_en/`) and Vietnamese (`lessons_vi/`). Modules 1-2 (Python basics + AI fundamentals) need no API keys. Module 3 builds agents. Module 4 starts with Claude Code (the bridge from notebooks to real files), then builds the pipeline. Module 5 completes the product and extends it. Lesson 18 is "How Everything Connects".
 
 ## Project structure
 
@@ -70,16 +70,14 @@ agentic-content-seo/
 |   ├── 01-python-basics/       (01-04: no API keys needed)
 |   ├── 02-understanding-ai/    (05-07: no API keys needed, LLM concepts)
 |   ├── 03-building-agents/     (08-12: needs ANTHROPIC_API_KEY)
-|   ├── 04-seo-pipeline/        (13-15: builds the real pipeline)
-|   ├── 05-complete-product/    (16-18: Airtable, connections, chat)
-|   └── 06-ai-assisted-dev/     (19-20: Claude Code, extending the product)
+|   ├── 04-building-the-product/ (13-16: Claude Code, then pipeline agents)
+|   └── 05-complete-product/    (17-20: Airtable, connections, chat, extending)
 ├── lessons_vi/                 <- Vietnamese translation (same 20 notebooks)
 |   ├── 01-python-co-ban/
 |   ├── 02-hieu-ve-ai/
 |   ├── 03-xay-dung-agent/
-|   ├── 04-seo-pipeline/
-|   ├── 05-san-pham-hoan-chinh/
-|   └── 06-phat-trien-voi-ai/
+|   ├── 04-xay-dung-san-pham/
+|   └── 05-san-pham-hoan-chinh/
 ├── output/                     <- The finished product (16 Python files)
 |   ├── chat.py                 <- Entry point (~60 lines, validation + start)
 |   ├── pipeline.py             Content pipeline orchestrator

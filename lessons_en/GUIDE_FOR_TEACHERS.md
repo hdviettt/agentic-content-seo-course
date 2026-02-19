@@ -4,7 +4,7 @@ This guide helps you teach the Agentic Content SEO curriculum effectively. It co
 
 ## Course overview
 
-- **20 lessons** across 6 modules
+- **20 lessons** across 5 modules
 - **Target audience**: Non-technical staff (marketing, SEO, content teams) with zero coding experience
 - **Total time**: 12-14 hours of instruction, best delivered across 3 days
 - **Goal**: Learners understand how the AI content pipeline works, can run and read the code, and can use Claude Code to extend and modify it
@@ -29,15 +29,14 @@ This guide helps you teach the Agentic Content SEO curriculum effectively. It co
 | Module 3 (lessons 8-12) | $0.75-1.50 (Sonnet calls, mini pipeline) |
 | Module 4 (lessons 13-15) | $2-5 (Sonnet + Grok, full pipeline) |
 | Module 5 (lessons 16-18) | $0-3 (DB is free, creating articles costs) |
-| Module 6 (lessons 19-20) | $0 (no API calls) |
 | **Total per student** | **$3-10** |
 
 For a class of 10: budget $30-100 in API costs. Module 4 is the most expensive part because lesson 15 runs the full 4-agent pipeline.
 
 **Cost control tips:**
-- Modules 1, 2, and 6 are completely free — no API calls at all
+- Modules 1 and 2 are completely free — no API calls at all. Lessons 13 (Claude Code) and 20 (Extending) are also free
 - In Module 3, have students run each demo cell only once (no re-runs)
-- In lesson 14, the writer agent cell takes 1-2 minutes and costs ~$0.50-1 per run. Consider running it as a live demo rather than having every student run it
+- In lesson 15, the writer agent cell takes 1-2 minutes and costs ~$0.50-1 per run. Consider running it as a live demo rather than having every student run it
 - In lesson 15, the full pipeline run costs ~$1-3. You can demo this once and let students just read the output
 - Module 5 lessons 17-18 don't need to create new articles — status and history queries are free
 
@@ -195,15 +194,23 @@ print(create_seo_title("technical seo"))
 - **Cost**: ~$0.20-0.40 for all three agents. Takes 1-2 minutes.
 - **Comparison table**: Spend time on the mini vs real pipeline comparison. This sets expectations for Module 4.
 
-### Lesson 13: Research and Outline Agents
+### Lesson 13: Claude Code Basics
+
+- **Pace**: Medium. Conceptual but very practical. This is the bridge from notebooks to real files.
+- **No API calls** — students read project files and write prompts as strings.
+- **Key moment**: Reading the actual CLAUDE.md file. Students realize: "This is the system prompt for Claude Code, just like instructions is the system prompt for an agent."
+- **Teach**: The 5-step workflow (Understand → Plan → Implement → Verify → Iterate). Connect to the pipeline pattern.
+- **Exercise**: Students write Claude Code prompts for 3 scenarios. Grade them on specificity (file paths, clear problem, constraints).
+
+### Lesson 14: Research and Outline Agents
 
 - **Pace**: Medium-slow. This is the first "real product" code.
-- **Important**: The "What's Different" section from the old curriculum has been replaced — the bridge lesson (12) now handles that gap. Lesson 13 opens by connecting to the mini pipeline pattern students already practiced.
+- **Important**: The bridge lesson (12) handles the gap from mini pipeline to production code. Lesson 14 opens by connecting to the mini pipeline pattern students already practiced.
 - **Key moment**: The full `ContentOutline` schema with nested `OutlineSection`. Students should recognize the pattern from Lesson 12.
 - **Cost**: Running this cell costs ~$0.10-0.20 (Sonnet for research + outline).
 - **Takes time**: The test run cell takes 30-60 seconds. Warn students.
 
-### Lesson 14: Writer and Image Agents
+### Lesson 15: Writer and Image Agents
 
 - **Pace**: Medium.
 - **Key moment**: Explain WHY different models are used. Students already understand the tradeoffs from Lesson 7 — now they see it applied.
@@ -211,7 +218,7 @@ print(create_seo_title("technical seo"))
 - **Cost**: The writer cell costs ~$0.50-1 per run (Grok for long article). Consider demoing once rather than having all students run.
 - **Image agent**: Since most students won't have image API keys, lesson 14 just shows the concept. This is fine.
 
-### Lesson 15: Full Pipeline
+### Lesson 16: Full Pipeline
 
 - **Pace**: Fast for the lesson itself. Slow for the "soak it in" discussion.
 - **Critical teaching moment**: Show the pipeline diagram (queued → researching → ... → review) and connect it to everything they've learned.
@@ -219,7 +226,7 @@ print(create_seo_title("technical seo"))
 - **After running**: Use the chat interface (`python output/chat.py`) to check the article status. Then open the generated `.md` file. This connects the notebook to the real product.
 - **sys.path.insert**: Students already saw this in Lesson 12. Just note: "Same pattern as the mini pipeline."
 
-### Lesson 16: Database (Airtable)
+### Lesson 17: Database (Airtable)
 
 - **Pace**: Slow. Database concepts are new for most.
 - **Safe to experiment**: Airtable has a visual UI so students can see their data immediately. Encourage experimentation.
@@ -227,31 +234,21 @@ print(create_seo_title("technical seo"))
 - **Teach**: The concept of record IDs (strings like "recABC123") and how Airtable fields map to Python dicts.
 - **The second half** uses the real `tools/airtable.py` module. This creates actual records in their Airtable base.
 
-### Lesson 17: How Everything Connects
+### Lesson 18: How Everything Connects
 
 - **Pace**: Fast. This is a short lesson.
 - **Key message**: "The chat interface calls the same `pipeline.py` and `tools/airtable.py` you already understand. This lesson shows how all the pieces fit together."
 - **Live demo**: Walk through the project structure and show how `chat.py` calls `tools/workspace.py` which calls `pipeline.py` which calls `tools/airtable.py`.
 - **Don't create articles** in class unless you want to spend API money. Show the flow but explain the cost.
 
-### Lesson 18: Chat Interface
+### Lesson 19: Chat Interface
 
 - **Pace**: Medium.
 - **Live demo**: Run `python output/chat.py` in a terminal. Type a message and let students watch the team delegation happen in real time.
 - **Key teaching point**: The Team concept — leader delegates to specialized members. Connect to real-world management.
 - **Hands-on**: Let students call `list_all_articles()` and `get_article_details()` directly in the notebook to understand what the team members actually do.
-- **Transition to Module 6**: Use the "Module 5 Complete" section to preview Claude Code. Build excitement: "You understand the full system. Now you'll learn how to extend it."
 
-### Lesson 19: Claude Code Basics (NEW)
-
-- **Pace**: Medium. Conceptual but very practical.
-- **No API calls** — students read project files and write prompts as strings.
-- **Key moment**: Reading the actual `CLAUDE.md` file. Students realize: "This is the system prompt for Claude Code, just like `instructions` is the system prompt for an agent."
-- **Teach**: The 5-step workflow (Understand → Plan → Implement → Verify → Iterate). Connect to the pipeline pattern.
-- **MCP section**: Keep it conceptual. The key takeaway is "MCPs give Claude Code access to documentation, like giving it reference books."
-- **Exercise**: Students write Claude Code prompts for 3 scenarios. Grade them on specificity (file paths, clear problem, constraints).
-
-### Lesson 20: Extending the Product (NEW)
+### Lesson 20: Extending the Product
 
 - **Pace**: Medium-slow. This is the capstone.
 - **No API calls** — students trace through what Claude Code would do.
@@ -287,26 +284,19 @@ Ask students to:
 2. Access nested data from a schema: "How would you get the heading of the first section from an outline?"
 3. Explain the difference between `list[str]` and `list[Section]`
 
-### After Module 4 (lesson 15)
+### After Module 4 (lesson 16)
 
 Ask students to:
 1. Draw the pipeline on paper: 4 agents, what each does, what data passes between them
-2. Explain why the writer uses Grok instead of Claude (connecting Lesson 7 to Lesson 14)
+2. Explain why the writer uses Grok instead of Claude (connecting Lesson 7 to Lesson 15)
 3. Describe what happens in the database at each pipeline step
 
-### After Module 5 (lesson 18)
+### After Module 5 (lesson 20)
 
 Ask students to:
 1. Use the chat interface to check article status and explain the output
 2. Explain how the chat interface delegates tasks to specialized team members
 3. Name 3 files in `output/` and describe what each does
-
-### After Module 6 (lesson 20)
-
-Ask students to:
-1. Describe the 5-step AI development workflow
-2. Write a Claude Code prompt for adding a simple feature (e.g., change the writer's tone)
-3. Given a schema, verify: is the model choice correct? Does it follow existing patterns?
 
 ## Curriculum notes
 
@@ -314,14 +304,14 @@ The following topics are covered in the notebooks. Reinforce them verbally where
 
 - **Tokens and context windows** — Lesson 05 explains these concepts. Reference them when discussing API costs.
 - **Prompt engineering** — Lesson 06 covers this thoroughly. Reference the 4-component pattern (Role, Task, Constraints, Examples) whenever reviewing agent instructions.
-- **Model tradeoffs** — Lesson 07 builds the decision framework. Reference it in Lessons 13-14 when students see the real model choices.
+- **Model tradeoffs** — Lesson 07 builds the decision framework. Reference it in Lessons 14-15 when students see the real model choices.
 - **JSON** — Lesson 10 includes a JSON intro section. Draw on a whiteboard to reinforce.
-- **Markdown** — Lesson 14 includes a Markdown intro section. Show a `.md` file and its rendered output side by side.
-- **Error handling (try/except)** — Lesson 15 includes a full explanation. Walk through it on screen.
-- **Nested schemas bridge** — Lesson 12 introduces nested schemas before the production code in Lesson 13. This eliminates the old complexity cliff.
-- **Production code bridge** — Lesson 18 includes a "Reading the Production Code" section mapping lessons to `output/` files.
+- **Markdown** — Lesson 15 includes a Markdown intro section. Show a `.md` file and its rendered output side by side.
+- **Error handling (try/except)** — Lesson 16 includes a full explanation. Walk through it on screen.
+- **Nested schemas bridge** — Lesson 12 introduces nested schemas before the production code in Lesson 14. This eliminates the old complexity cliff.
+- **Production code bridge** — Lesson 19 includes a "Reading the Production Code" section mapping lessons to `output/` files.
 - **Setup verification** — Lesson 04 ends with a 4-check verification cell. Do not proceed until all students pass.
-- **Cost warnings** — Lessons 08, 12, 13, 14, 15 include cost notes before expensive cells.
+- **Cost warnings** — Lessons 08, 12, 14, 15, 16 include cost notes before expensive cells.
 
 ## Adapting the course
 
@@ -335,11 +325,11 @@ Skip: lessons 1-4, 9, 13, 14, 16, 17, 18, 19, 20.
 
 ### For a 2-day workshop (~8-10 hours)
 
-Combine Modules 1-2 on Day 1 (skip exercises, demo-only). Combine Modules 3-5 on Day 2 (demo pipeline and database). Skip Module 6 but mention Claude Code in the wrap-up.
+Combine Modules 1-2 on Day 1 (skip exercises, demo-only). Combine Modules 3-5 on Day 2 (demo pipeline and database). Demo Claude Code from Lesson 13 in the wrap-up.
 
 ### For experienced developers
 
-Skip Modules 1-2 entirely. Start at Module 3. Add time for code review — walk through the actual `output/` files in detail. Module 6 is still valuable.
+Skip Modules 1-2 entirely. Start at Module 3. Add time for code review — walk through the actual `output/` files in detail. Module 5's Lesson 20 is still valuable.
 
 ### For non-SEO teams
 

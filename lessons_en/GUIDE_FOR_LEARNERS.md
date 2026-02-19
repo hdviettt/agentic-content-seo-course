@@ -127,40 +127,31 @@ Needs `ANTHROPIC_API_KEY`. Each cell that calls an agent costs a small amount (~
 
 After Module 3 you can: create AI agents, give them tools, make them return structured data, chain them together, and build a working 3-agent pipeline with nested schemas.
 
-### Module 4: The Real SEO Pipeline (lessons 13-15)
+### Module 4: Building the Product (lessons 13-16)
 
-Needs `ANTHROPIC_API_KEY` + `XAI_API_KEY`. Running a full pipeline costs ~$1-3 in API calls.
-
-| Lesson | Topic | Time |
-|--------|-------|------|
-| 13 | Research + Outline agents (real code) | 45 min |
-| 14 | Writer + Image agents (real code) | 45 min |
-| 15 | Full pipeline end-to-end | 30 min |
-
-After Module 4 you can: run the full content pipeline and understand how each agent contributes.
-
-### Module 5: The Complete Product (lessons 16-18)
-
-Needs both API keys for creating articles. Status/history commands are free.
+Lesson 13 (Claude Code) needs no API keys. Lessons 14-16 need `ANTHROPIC_API_KEY` + `XAI_API_KEY`. Running a full pipeline costs ~$1-3 in API calls.
 
 | Lesson | Topic | Time |
 |--------|-------|------|
-| 16 | Airtable database layer | 45 min |
-| 17 | How everything connects | 20 min |
-| 18 | Chat interface (Agno Team) | 30 min |
+| 13 | Claude Code basics (installation, CLAUDE.md, workflow) | 45 min |
+| 14 | Research + Outline agents (real code) | 45 min |
+| 15 | Writer + Image agents (real code) | 45 min |
+| 16 | Full pipeline end-to-end | 30 min |
 
-After Module 5 you can: use the complete product via chat, and understand how all pieces connect.
+After Module 4 you can: use Claude Code to navigate the codebase, run the full content pipeline, and understand how each agent contributes.
 
-### Module 6: AI-Assisted Development (lessons 19-20)
+### Module 5: The Complete Product (lessons 17-20)
 
-No API keys needed. Conceptual + guided walkthrough.
+Needs both API keys for creating articles. Status/history commands are free. Lesson 20 needs no API keys.
 
 | Lesson | Topic | Time |
 |--------|-------|------|
-| 19 | Claude Code basics (installation, CLAUDE.md, workflow) | 45 min |
+| 17 | Airtable database layer | 45 min |
+| 18 | How everything connects | 20 min |
+| 19 | Chat interface (Agno Team) | 30 min |
 | 20 | Extending the product (adding a proofreading agent) | 50 min |
 
-After Module 6 you can: use Claude Code to extend and modify the product, verify AI-generated code using your knowledge from all previous modules, and direct AI to build features for you.
+After Module 5 you can: use the complete product via chat, understand how all pieces connect, and use Claude Code to extend and modify the product.
 
 ## Key concepts glossary
 
