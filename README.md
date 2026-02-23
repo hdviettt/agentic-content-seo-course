@@ -4,7 +4,7 @@ An AI-powered SEO content pipeline that researches topics, creates outlines, wri
 
 Built with [Agno](https://github.com/agno-agi/agno), powered by Claude (Anthropic) and Grok (xAI).
 
-This repo is also a **teaching project** — the `lessons_en/` folder contains 20 Jupyter notebooks across 5 modules that walk non-tech learners from Python basics to building and extending the full pipeline. A complete **Vietnamese translation** is available in `lessons_vi/`.
+This repo is also a **teaching project** — the `lessons_en/` folder contains 21 Jupyter notebooks across 5 modules that walk non-tech learners from Python basics to building and extending the full pipeline. A complete **Vietnamese translation** is available in `lessons_vi/`.
 
 ## Setup
 
@@ -34,21 +34,21 @@ python output/tools/airtable.py
 python output/chat.py
 ```
 
-Talk naturally: "Create an article about SEO on-page", "Show me all articles", "Retry article recABC123", "Load topics from topics.csv".
+Talk naturally: "Create an article about SEO on-page", "Show me all articles", "Retry article recABC123", "Load topics from topics.csv", "Analyze the AI Overview for 'on-page SEO'".
 
-The chat interface is the primary way to use the product — an AI team that creates articles, tracks status, retries failures, and checks rankings, all through conversation.
+The chat interface is the primary way to use the product — an AI team that creates articles, tracks status, retries failures, and analyzes Google AI Overviews, all through conversation.
 
 ## Teaching Curriculum (`lessons_en/`)
 
-20 Jupyter notebooks (English) across 5 modules. Start with Module 1 (no API keys needed).
+21 Jupyter notebooks (English) across 5 modules. Start with Module 1 (no API keys needed).
 
 | Module | Topic | Notebooks |
 |--------|-------|-----------|
 | **01 - Python Basics** | Variables, lists, dicts, functions, packages | 01-04 |
 | **02 - Understanding AI** | How LLMs work, prompts & context, model choices | 05-07 |
-| **03 - Building Agents** | First agent, tools, structured output, chaining, mini pipeline | 08-12 |
-| **04 - Building the Product** | Claude Code, research, outline, writer, images, full pipeline | 13-16 |
-| **05 - Complete Product** | Airtable database, how everything connects, chat interface, extending | 17-20 |
+| **03 - Building Agents** | First agent, tools, API calling, structured output, chaining, mini pipeline | 08-13 |
+| **04 - Building the Product** | Claude Code, research, outline, writer, images, full pipeline | 14-17 |
+| **05 - Complete Product** | Airtable database, how everything connects, chat interface, extending | 18-21 |
 
 ```bash
 python -m pip install jupyter
@@ -66,28 +66,28 @@ output/                     The finished product (16 Python files)
   agents/
     __init__.py             Re-exports everything
     schemas.py              Pydantic models (ContentOutline, EnrichedContent, etc.)
-    researcher.py           Research Agent (Claude Sonnet + DuckDuckGo)
+    researcher.py           Research Agent (Claude Sonnet + DuckDuckGo + optional AIOTools)
     outliner.py             Outline Agent (Claude Sonnet + structured output)
     writer.py               Writer Agent (Grok-4, plain Markdown)
     image.py                Image Agent + FreepikTools + DataForSEOTools
     content_creator.py      Chat team member (creates articles)
     status_tracker.py       Chat team member (queries articles)
-    seo_manager.py          Chat team member (rankings + URLs)
+    aio_analyst.py          Chat team member (AI Overview analysis)
     team.py                 Agno Team assembly (Opus leader + 3 members)
   tools/
     __init__.py             Package marker
     airtable.py             Airtable CRUD + one-time setup
     workspace.py            Team member tool functions
-    rankings.py             SERP rank checking via DataForSEO
+    aio.py                  Google AI Overview analysis via DataForSEO
 
-lessons_en/                 Teaching curriculum (20 English notebooks)
+lessons_en/                 Teaching curriculum (21 English notebooks)
   01-python-basics/         Lessons 01-04 (no API keys needed)
   02-understanding-ai/      Lessons 05-07 (no API keys needed)
-  03-building-agents/       Lessons 08-12 (needs ANTHROPIC_API_KEY)
-  04-building-the-product/  Lessons 13-16 (Claude Code, builds the real pipeline)
-  05-complete-product/      Lessons 17-20 (Airtable, connections, chat, extending)
+  03-building-agents/       Lessons 08-13 (needs ANTHROPIC_API_KEY)
+  04-building-the-product/  Lessons 14-17 (Claude Code, builds the real pipeline)
+  05-complete-product/      Lessons 18-21 (Airtable, connections, chat, extending)
 
-lessons_vi/                 Vietnamese translation (same 20 notebooks)
+lessons_vi/                 Vietnamese translation (same 21 notebooks)
 
 content/                    Generated articles (.md files)
 .env.example                Template for API keys
@@ -99,10 +99,10 @@ content/                    Generated articles (.md files)
 
 ```
 Topic -> [Research Agent] -> [Outline Agent] -> [Writer Agent] -> [Image Agent] -> Article
-           Claude+DDG        Claude+schema      Grok-4         Claude+tools
+          Claude+DDG+AIO     Claude+schema      Grok-4         Claude+tools
 ```
 
-- **Research Agent** — searches the web via DuckDuckGo, returns research notes
+- **Research Agent** — searches the web via DuckDuckGo, optionally checks Google AI Overviews
 - **Outline Agent** — creates a structured outline (Pydantic schema output)
 - **Writer Agent** — writes full Markdown article from outline (Grok-4)
 - **Image Agent** — finds and inserts images (optional, needs API keys)

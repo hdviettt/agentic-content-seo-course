@@ -270,76 +270,118 @@ def get_version_history(article_id: str) -> str:
 
 
 # ============================================================
-# Published URL
+# AIO Analysis
 # ============================================================
 
 
-def set_article_published_url(article_id: str, url: str) -> str:
-    """Set the live published URL for an article. This URL is used for rank tracking.
+def analyze_keyword_aio(keyword: str, article_id: str = "") -> str:
+    """Analyze what Google's AI Overview says about a keyword.
+
+    Calls the DataForSEO SERP API to fetch the AI Overview for the keyword,
+    then saves the result to Airtable if an article_id is provided.
+
+    Args:
+        keyword: The search term to analyze.
+        article_id: Optional article ID to link the analysis to.
+
+    Returns:
+        JSON with the AI Overview content, references, and whether an AIO exists.
+    """
+    from tools.aio import get_ai_overview, save_aio_analysis
+
+    result = get_ai_overview(keyword)
+    if result is None:
+        return json.dumps({"error": "DataForSEO not configured. Set DATA_FOR_SEO_API_KEY in .env."})
+
+    # Save to Airtable if linked to an article
+    if article_id:
+        save_aio_analysis(article_id, keyword, result)
+
+    return json.dumps(result)
+
+
+def get_aio_history(article_id: str) -> str:
+    """Get past AI Overview analyses for an article.
 
     Args:
         article_id: The article ID.
-        url: The live URL where the article is published.
 
     Returns:
-        JSON confirmation.
+        JSON array of AIO analysis records sorted by date (newest first).
     """
-    from tools.airtable import set_published_url, get_article
+    from tools.airtable import get_aio_analyses
+
+    analyses = get_aio_analyses(article_id=article_id)
+    if not analyses:
+        return json.dumps({"message": f"No AIO analyses found for article {article_id}."})
+
+    return json.dumps([
+        {
+            "keyword": a["keyword"],
+            "has_aio": a["has_aio"],
+            "aio_content": a["aio_content"][:500] if a["aio_content"] else "",
+            "checked_date": a["checked_date"],
+        }
+        for a in analyses
+    ])
+
+
+def optimize_for_aio(article_id: str) -> str:
+    """Compare an article against current AI Overviews for its keywords.
+
+    Fetches fresh AIO data for each of the article's target keywords and
+    returns a comparison showing what the AI Overview covers vs what the
+    article covers, plus content gaps and cited sources.
+
+    Args:
+        article_id: The article ID to optimize.
+
+    Returns:
+        JSON with per-keyword AIO comparison data.
+    """
+    from tools.airtable import get_article
+    from tools.aio import get_ai_overview, save_aio_analysis
 
     article = get_article(article_id)
     if not article:
         return json.dumps({"error": f"Article {article_id} not found."})
 
-    set_published_url(article_id, url)
-    return json.dumps({"article_id": article_id, "published_url": url, "status": "updated"})
+    # Parse keywords
+    kw_raw = article.get("target_keywords")
+    keywords = []
+    if kw_raw:
+        try:
+            keywords = json.loads(kw_raw)
+        except (json.JSONDecodeError, TypeError):
+            pass
 
+    if not keywords:
+        return json.dumps({"error": "Article has no target keywords to analyze."})
 
-# ============================================================
-# Rank Tracking
-# ============================================================
+    comparisons = []
+    for kw in keywords:
+        aio_data = get_ai_overview(kw)
+        if aio_data is None:
+            comparisons.append({
+                "keyword": kw,
+                "error": "DataForSEO not configured.",
+            })
+            continue
 
+        # Save analysis to Airtable
+        save_aio_analysis(article_id, kw, aio_data)
 
-def check_rankings(article_id: str, keywords: str = "") -> str:
-    """Check SERP rankings for an article's keywords via DataForSEO.
+        comparisons.append({
+            "keyword": kw,
+            "has_aio": aio_data.get("has_aio", False),
+            "aio_content": aio_data.get("content_markdown", ""),
+            "aio_references": aio_data.get("references", []),
+            "article_has_content": bool(article.get("article_markdown")),
+            "article_word_count": article.get("word_count"),
+        })
 
-    Args:
-        article_id: The article to check rankings for.
-        keywords: Optional comma-separated keywords. If empty, uses the
-                  article's target_keywords.
-
-    Returns:
-        JSON array of ranking results with keyword, position, and URL.
-    """
-    from tools.rankings import check_article_rankings
-
-    kw_list = [k.strip() for k in keywords.split(",") if k.strip()] if keywords else None
-    results = check_article_rankings(article_id, keywords=kw_list)
-    return json.dumps(results)
-
-
-def get_ranking_history(article_id: str) -> str:
-    """Get the SERP ranking history for an article.
-
-    Args:
-        article_id: The article ID.
-
-    Returns:
-        JSON array of ranking records sorted by date (newest first).
-    """
-    from tools.airtable import get_rankings
-
-    rankings = get_rankings(article_id=article_id)
-    if not rankings:
-        return json.dumps({"message": f"No rankings found for article {article_id}."})
-
-    return json.dumps([
-        {
-            "keyword": r["keyword"],
-            "position": r["position"],
-            "url": r["url"],
-            "check_date": r["check_date"],
-            "search_engine": r["search_engine"],
-            "location": r["location"],
-        }
-        for r in rankings
-    ])
+    return json.dumps({
+        "article_id": article_id,
+        "topic": article["topic"],
+        "comparisons": comparisons,
+    })

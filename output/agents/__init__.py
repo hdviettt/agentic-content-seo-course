@@ -16,7 +16,7 @@ from .image import image_agent, build_image_agent, get_dataforseo_credentials, F
 # Chat team members
 from .content_creator import content_creator
 from .status_tracker import status_tracker
-from .seo_manager import seo_manager
+from .aio_analyst import aio_analyst
 
 # Team assembly
 from .team import team

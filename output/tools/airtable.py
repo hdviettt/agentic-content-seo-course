@@ -82,7 +82,6 @@ _FIELD_MAP = {
     "output_file": "Output File",
     "word_count": "Word Count",
     "meta_description": "Meta Description",
-    "published_url": "Published URL",
     "error_message": "Error Message",
     "batch_id": "Batch ID",
 }
@@ -111,7 +110,6 @@ def _record_to_dict(record):
         "word_count": f.get("Word Count"),
         "meta_description": f.get("Meta Description"),
         "batch_id": f.get("Batch ID"),
-        "published_url": f.get("Published URL"),
         "error_message": f.get("Error Message"),
         "created_at": f.get("Created"),
         "updated_at": f.get("Updated"),
@@ -258,27 +256,27 @@ def get_article_versions(article_id):
 
 
 # ============================================================
-# Rankings
+# AIO Analyses
 # ============================================================
 
 
-def save_ranking(article_id, keyword, position, url, check_date,
-                 search_engine="google", location="United States"):
-    """Insert a SERP ranking record. Returns the ranking record ID."""
-    table = _get_table("Rankings")
+def save_aio_analysis(article_id, keyword, aio_content, references_json,
+                      has_aio, location="United States", language="en"):
+    """Insert an AIO analysis record. Returns the record ID."""
+    table = _get_table("AIO Analyses")
     if table is None:
         return None
 
     fields = {
         "Keyword": keyword,
-        "Position": position,
-        "Check Date": check_date,
-        "Search Engine": search_engine,
+        "AIO Content": aio_content or "",
+        "References": references_json or "[]",
+        "Has AIO": bool(has_aio),
         "Location": location,
+        "Language": language,
+        "Checked Date": _now(),
         "Article ID": article_id,
     }
-    if url:
-        fields["Ranked URL"] = url
     if article_id:
         fields["Articles"] = [article_id]  # Linked record
 
@@ -286,9 +284,9 @@ def save_ranking(article_id, keyword, position, url, check_date,
     return record["id"]
 
 
-def get_rankings(article_id=None, keyword=None):
-    """Get ranking records, optionally filtered by article and/or keyword."""
-    table = _get_table("Rankings")
+def get_aio_analyses(article_id=None, keyword=None):
+    """Get AIO analysis records, optionally filtered by article and/or keyword."""
+    table = _get_table("AIO Analyses")
     if table is None:
         return []
 
@@ -306,34 +304,22 @@ def get_rankings(article_id=None, keyword=None):
             kwargs["formula"] = "AND(" + ", ".join(formula_parts) + ")"
 
     records = table.all(**kwargs)
-    records.sort(key=lambda r: r.get("fields", {}).get("Check Date", ""), reverse=True)
+    records.sort(key=lambda r: r.get("fields", {}).get("Checked Date", ""), reverse=True)
 
     return [
         {
             "id": r["id"],
             "article_id": r["fields"].get("Article ID", ""),
             "keyword": r["fields"].get("Keyword", ""),
-            "position": r["fields"].get("Position"),
-            "url": r["fields"].get("Ranked URL"),
-            "check_date": r["fields"].get("Check Date"),
-            "search_engine": r["fields"].get("Search Engine", "google"),
+            "aio_content": r["fields"].get("AIO Content", ""),
+            "references": r["fields"].get("References", "[]"),
+            "has_aio": r["fields"].get("Has AIO", False),
             "location": r["fields"].get("Location", "United States"),
+            "language": r["fields"].get("Language", "en"),
+            "checked_date": r["fields"].get("Checked Date"),
         }
         for r in records
     ]
-
-
-# ============================================================
-# Published URL
-# ============================================================
-
-
-def set_published_url(article_id, url):
-    """Set the live published URL for an article."""
-    table = _get_table("Articles")
-    if table is None:
-        return
-    table.update(article_id, {"Published URL": url, "Updated": _now()})
 
 
 # ============================================================
@@ -347,13 +333,12 @@ _ARTICLES_FIELDS = [
         {"name": "queued"}, {"name": "researching"},
         {"name": "outlining"}, {"name": "writing"},
         {"name": "enriching"}, {"name": "review"},
-        {"name": "published"}, {"name": "error"},
+        {"name": "error"},
     ]}},
     {"name": "Outline", "type": "multilineText"},
     {"name": "Content", "type": "multilineText"},
     {"name": "Word Count", "type": "number", "options": {"precision": 0}},
     {"name": "Meta Description", "type": "singleLineText"},
-    {"name": "Published URL", "type": "url"},
     {"name": "Output File", "type": "singleLineText"},
     {"name": "Batch ID", "type": "singleLineText"},
     {"name": "Error Message", "type": "multilineText"},
@@ -382,17 +367,18 @@ _VERSIONS_FIELDS = [
     }},
 ]
 
-_RANKINGS_FIELDS = [
+_AIO_ANALYSES_FIELDS = [
     {"name": "Keyword", "type": "singleLineText"},
-    {"name": "Position", "type": "number", "options": {"precision": 0}},
-    {"name": "Ranked URL", "type": "url"},
-    {"name": "Check Date", "type": "date", "options": {
-        "dateFormat": {"name": "iso"},
-    }},
-    {"name": "Search Engine", "type": "singleSelect", "options": {"choices": [
-        {"name": "google"}, {"name": "bing"},
-    ]}},
+    {"name": "AIO Content", "type": "multilineText"},
+    {"name": "References", "type": "multilineText"},
+    {"name": "Has AIO", "type": "checkbox", "options": {"color": "greenBright", "icon": "check"}},
     {"name": "Location", "type": "singleLineText"},
+    {"name": "Language", "type": "singleLineText"},
+    {"name": "Checked Date", "type": "dateTime", "options": {
+        "dateFormat": {"name": "iso"},
+        "timeFormat": {"name": "24hour"},
+        "timeZone": "utc",
+    }},
     {"name": "Article ID", "type": "singleLineText"},
 ]
 
@@ -409,7 +395,7 @@ def _list_bases(pat):
 
 
 def setup():
-    """One-time setup: create Articles, Versions, and Rankings tables.
+    """One-time setup: create Articles, Versions, and AIO Analyses tables.
 
     Run this once, then add the printed AIRTABLE_BASE_ID to your .env file.
     """
@@ -458,7 +444,7 @@ def setup():
     tables_to_create = {
         "Articles": (_ARTICLES_FIELDS, "SEO content articles"),
         "Versions": (_VERSIONS_FIELDS, "Article version history"),
-        "Rankings": (_RANKINGS_FIELDS, "SERP ranking history"),
+        "AIO Analyses": (_AIO_ANALYSES_FIELDS, "Google AI Overview analyses"),
     }
 
     for table_name, (fields, desc) in tables_to_create.items():
@@ -483,14 +469,14 @@ def setup():
 
         articles_table = api.table(base_id, table_ids["Articles"])
 
-        # Articles -> Rankings link
-        if "Rankings" not in existing_fields.get("Articles", set()):
+        # Articles -> AIO Analyses link
+        if "AIO Analyses" not in existing_fields.get("Articles", set()):
             articles_table.create_field(
-                name="Rankings",
+                name="AIO Analyses",
                 field_type="multipleRecordLinks",
-                options={"linkedTableId": table_ids["Rankings"]},
+                options={"linkedTableId": table_ids["AIO Analyses"]},
             )
-            print("Added Articles -> Rankings link.")
+            print("Added Articles -> AIO Analyses link.")
 
         # Articles -> Versions link
         if "Versions" not in existing_fields.get("Articles", set()):

@@ -2,7 +2,7 @@
 Content generation pipeline -- article creation and batch processing.
 
 The core pipeline runs 4 agent steps sequentially with DB updates:
-    1. Research   -- web search for topic info (Claude Sonnet + DuckDuckGo)
+    1. Research   -- web search + optional AIO analysis (Claude Sonnet + DuckDuckGo/AIOTools)
     2. Outline    -- structured outline from research (Claude Sonnet + output_schema)
     3. Write      -- full Markdown article from outline (Grok-4)
     4. Enrich     -- find and insert images (Claude Sonnet + image tools, optional)
