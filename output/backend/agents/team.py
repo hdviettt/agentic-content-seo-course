@@ -2,12 +2,14 @@
 SEO Workspace Team -- Sonnet leader orchestrating 3 Sonnet members.
 
 This assembles the conversational team used by chat.py.
+Uses task mode so the leader can run parallel tasks (e.g. batch article creation).
 """
 
 import os
 
 from agno.models.anthropic import Claude
 from agno.team import Team
+from agno.team.mode import TeamMode
 from agno.db.sqlite import SqliteDb
 
 from .content_writer import content_writer
@@ -19,7 +21,9 @@ if image_finder is not None:
     members.append(image_finder)
 
 team = Team(
+    id="seo-workspace",
     name="SEO Workspace",
+    mode=TeamMode.tasks,
     model=Claude(id="claude-sonnet-4-5-20250929"),
     members=members,
     instructions=[
@@ -35,6 +39,7 @@ team = Team(
         "For article creation: delegate to Content Writer.",
         "If the user wants images added, then delegate to Image Finder with the article_id.",
         "For AIO analysis: delegate to AIO Analyzer.",
+        "BATCH PROCESSING: when a user asks for multiple articles, create separate tasks for each and use execute_tasks_parallel to run them concurrently.",
         "When presenting member results, pass through their detailed findings directly -- include all raw data, references, and analysis.",
         "Do NOT add your own summary or interpretation on top. Your job is to relay the member's response faithfully, then suggest next steps if relevant.",
         "When a user refers to 'it' or 'that article', use conversation history to resolve the reference.",
@@ -45,4 +50,5 @@ team = Team(
     num_history_runs=5,
     markdown=True,
     store_member_responses=True,
+    max_iterations=15,
 )

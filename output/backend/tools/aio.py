@@ -2,7 +2,7 @@
 AIO (AI Overview) analysis -- checks what Google's AI says about a topic.
 
 Queries the DataForSEO SERP API to extract Google AI Overview content for
-keywords. Results can be saved to Airtable via tools.airtable.
+keywords.
 
 Also houses get_dataforseo_credentials() since both AIO and image search
 use DataForSEO.
@@ -146,42 +146,6 @@ def get_ai_overview(keyword, location_code=2840, language_code="en"):
     return json.loads(result_json)
 
 
-def _save_aio_analysis(article_id, keyword, aio_data):
-    """Save an AIO analysis result to Airtable (internal helper).
-
-    Args:
-        article_id: The article this analysis is for.
-        keyword: The keyword that was checked.
-        aio_data: Dict from get_ai_overview() with has_aio, content_markdown, etc.
-
-    Returns:
-        The Airtable record ID, or None.
-    """
-    from tools.airtable import save_aio_analysis as db_save
-
-    refs = aio_data.get("references", [])
-    refs_json = json.dumps(refs) if isinstance(refs, list) else refs
-
-    return db_save(
-        article_id=article_id,
-        keyword=keyword,
-        aio_content=aio_data.get("content_markdown", ""),
-        references_json=refs_json,
-        has_aio=aio_data.get("has_aio", False),
-    )
-
-
-def get_aio_analyses(article_id):
-    """Get past AIO analyses for an article.
-
-    Returns:
-        List of analysis dicts from Airtable.
-    """
-    from tools.airtable import get_aio_analyses as db_get
-
-    return db_get(article_id=article_id)
-
-
 # ============================================================
 # Agent-facing tool functions (return JSON strings)
 # ============================================================
@@ -190,12 +154,11 @@ def get_aio_analyses(article_id):
 def analyze_keyword_aio(keyword: str, article_id: str = "") -> str:
     """Analyze what Google's AI Overview says about a keyword.
 
-    Calls the DataForSEO SERP API to fetch the AI Overview for the keyword,
-    then saves the result to Airtable if an article_id is provided.
+    Calls the DataForSEO SERP API to fetch the AI Overview for the keyword.
 
     Args:
         keyword: The search term to analyze.
-        article_id: Optional article ID to link the analysis to.
+        article_id: Optional article ID (for context, not used for storage).
 
     Returns:
         JSON with the AI Overview content, references, and whether an AIO exists.
@@ -203,10 +166,6 @@ def analyze_keyword_aio(keyword: str, article_id: str = "") -> str:
     result = get_ai_overview(keyword)
     if result is None:
         return json.dumps({"error": "DataForSEO not configured. Set DATA_FOR_SEO_API_KEY in .env."})
-
-    # Save to Airtable if linked to an article
-    if article_id:
-        _save_aio_analysis(article_id, keyword, result)
 
     return json.dumps(result)
 
@@ -224,7 +183,7 @@ def optimize_for_aio(article_id: str) -> str:
     Returns:
         JSON with per-keyword AIO comparison data and the article's markdown.
     """
-    from tools.airtable import get_article
+    from tools.storage import get_article
 
     article = get_article(article_id)
     if not article:
@@ -251,9 +210,6 @@ def optimize_for_aio(article_id: str) -> str:
                 "error": "DataForSEO not configured.",
             })
             continue
-
-        # Save analysis to Airtable
-        _save_aio_analysis(article_id, kw, aio_data)
 
         comparisons.append({
             "keyword": kw,

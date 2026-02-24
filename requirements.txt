@@ -1,10 +1,8 @@
 agno
-openai
 anthropic
 sqlalchemy
 httpx
 python-dotenv
-ddgs
 fastapi
+uvicorn
 jupyter
-pyairtable

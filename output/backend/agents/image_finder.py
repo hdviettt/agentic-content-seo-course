@@ -1,7 +1,7 @@
 """
 Image Finder -- finds and inserts images into articles (optional).
 
-Model: Claude Sonnet | Tools: DataForSEO Images + Airtable | Output: plain text
+Model: Claude Sonnet | Tools: DataForSEO Images + local storage | Output: plain text
 
 Returns None if no DataForSEO API key is configured.
 """
@@ -11,7 +11,7 @@ from agno.models.anthropic import Claude
 
 from tools.aio import get_dataforseo_credentials
 from tools.images import DataForSEOImageTools
-from tools.airtable import get_article_content, update_article_content
+from tools.storage import get_article_content, update_article_content
 
 
 def build_image_finder() -> Agent | None:

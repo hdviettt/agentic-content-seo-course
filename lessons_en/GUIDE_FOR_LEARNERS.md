@@ -4,7 +4,7 @@ Welcome to the Agentic Content SEO course. This guide tells you everything you n
 
 ## What you'll build
 
-By the end of 20 lessons, you'll understand how an AI-powered SEO content pipeline works — from researching a topic to generating a complete article. You'll be able to run it, modify it, explain how each piece works, and use AI tools like Claude Code to extend it further.
+By the end of 21 lessons, you'll understand how an AI-powered SEO content system works — from researching a topic to generating a complete article with images. You'll be able to run it, modify it, explain how each piece works, and use AI tools like Claude Code to extend it further.
 
 ## What you need before starting
 
@@ -21,6 +21,7 @@ By the end of 20 lessons, you'll understand how an AI-powered SEO content pipeli
 | Python 3.12+ | Runs all the code | `python --version` in terminal |
 | Jupyter Notebook | Runs the lessons | Installed via requirements.txt |
 | A code editor | To read production code later | VS Code recommended |
+| Node.js 18+ | Runs the frontend | `node --version` in terminal |
 | Git (optional) | To track your changes | `git --version` |
 
 ### API keys
@@ -28,9 +29,7 @@ By the end of 20 lessons, you'll understand how an AI-powered SEO content pipeli
 | Key | When needed | Cost |
 |-----|------------|------|
 | `ANTHROPIC_API_KEY` | Module 3+ (lesson 8 onward) | Pay-per-use. ~$0.50-2 per full article |
-| `XAI_API_KEY` | Module 4+ (lesson 14 onward) | Pay-per-use. ~$0.50-1 per article |
-| `FREEPIK_API_KEY` | Optional (image enrichment) | Free tier available |
-| `DATA_FOR_SEO_API_KEY` | Optional (image enrichment) | Free trial available |
+| `DATA_FOR_SEO_API_KEY` | Optional (web search, images, AIO) | Free trial available |
 
 You do NOT need any API keys for Modules 1-2 (lessons 1-7).
 
@@ -50,33 +49,21 @@ Create a file called `.env` in the project root (same folder as `README.md`):
 
 ```
 ANTHROPIC_API_KEY=your_key_here
-XAI_API_KEY=your_key_here
-AIRTABLE_PAT=your_airtable_personal_access_token_here
+DATA_FOR_SEO_API_KEY=Basic your_base64_encoded_credentials_here
 ```
 
-Ask your teacher for the API keys if you don't have them. For Airtable, get a Personal Access Token at [airtable.com/create/tokens](https://airtable.com/create/tokens).
+Ask your teacher for the API keys if you don't have them.
 
-### Step 3: Set up Airtable
-
-Airtable is used to store articles and track their status. Run this once to create the tables:
+### Step 3: Install frontend dependencies
 
 ```bash
-python output/tools/airtable.py
+cd output/frontend
+npm install
 ```
-
-Add the printed `AIRTABLE_BASE_ID` to your `.env` file.
 
 ### Step 4: Verify your setup
 
-Open a terminal and run:
-
-```bash
-python -c "import agno; print('agno OK')"
-python -c "import anthropic; print('anthropic OK')"
-python -c "from dotenv import load_dotenv; load_dotenv(); import os; key=os.getenv('ANTHROPIC_API_KEY',''); print('API key found' if len(key)>5 else 'WARNING: API key not found -- check your .env file')"
-```
-
-All three should print OK / "API key found". If not, ask your teacher before continuing.
+Open Lesson 04 (`lessons_en/01-python-basics/04_setup_and_packages.ipynb`) and run the verification cell at the bottom. All 3 checks must pass.
 
 ### Step 5: Open Jupyter
 
@@ -113,7 +100,7 @@ No API keys needed. Conceptual lessons with Python exercises.
 
 After Module 2 you can: explain how LLMs work, write effective prompts, and understand why different models are chosen for different tasks.
 
-### Module 3: Building Agents (lessons 8-12)
+### Module 3: Building Agents (lessons 8-13)
 
 Needs `ANTHROPIC_API_KEY`. Each cell that calls an agent costs a small amount (~$0.01-0.05).
 
@@ -122,36 +109,35 @@ Needs `ANTHROPIC_API_KEY`. Each cell that calls an agent costs a small amount (~
 | 08 | Create your first agent | 30 min |
 | 09 | Give agents tools (web search) | 30 min |
 | 10 | Structured output (Pydantic) | 45 min |
-| 11 | Chain agents into a pipeline | 30 min |
-| 12 | Build a mini pipeline (bridge to production) | 50 min |
+| 11 | API calling (how agents talk to Claude) | 30 min |
+| 12 | Chain agents into a pipeline | 30 min |
+| 13 | Build a mini pipeline (bridge to production) | 50 min |
 
-After Module 3 you can: create AI agents, give them tools, make them return structured data, chain them together, and build a working 3-agent pipeline with nested schemas.
+After Module 3 you can: create AI agents, give them tools, make them return structured data, chain them together, and build a working mini pipeline.
 
-### Module 4: Building the Product (lessons 13-16)
+### Module 4: Building the Product (lessons 14-17)
 
-Lesson 13 (Claude Code) needs no API keys. Lessons 14-16 need `ANTHROPIC_API_KEY` + `XAI_API_KEY`. Running a full pipeline costs ~$1-3 in API calls.
-
-| Lesson | Topic | Time |
-|--------|-------|------|
-| 13 | Claude Code basics (installation, CLAUDE.md, workflow) | 45 min |
-| 14 | Research + Outline agents (real code) | 45 min |
-| 15 | Writer + Image agents (real code) | 45 min |
-| 16 | Full pipeline end-to-end | 30 min |
-
-After Module 4 you can: use Claude Code to navigate the codebase, run the full content pipeline, and understand how each agent contributes.
-
-### Module 5: The Complete Product (lessons 17-20)
-
-Needs both API keys for creating articles. Status/history commands are free. Lesson 20 needs no API keys.
+Lesson 14 (Claude Code) needs no API keys. Lessons 15-17 need `ANTHROPIC_API_KEY`.
 
 | Lesson | Topic | Time |
 |--------|-------|------|
-| 17 | Airtable database layer | 45 min |
-| 18 | How everything connects | 20 min |
-| 19 | Chat interface (Agno Team) | 30 min |
-| 20 | Extending the product (adding a proofreading agent) | 50 min |
+| 14 | Claude Code basics (installation, CLAUDE.md, workflow) | 45 min |
+| 15 | The Content Writer agent | 45 min |
+| 16 | Image Finder + AIO Analyzer agents | 45 min |
+| 17 | Team & batch processing | 30 min |
 
-After Module 5 you can: use the complete product via chat, understand how all pieces connect, and use Claude Code to extend and modify the product.
+After Module 4 you can: use Claude Code to navigate the codebase, understand each agent, and run batch article creation.
+
+### Module 5: The Complete Product (lessons 18-21)
+
+| Lesson | Topic | Time |
+|--------|-------|------|
+| 18 | Local file storage | 45 min |
+| 19 | How everything connects | 20 min |
+| 20 | Web interface (AgentOS + React) | 30 min |
+| 21 | Extending the product | 50 min |
+
+After Module 5 you can: use the complete product via the web interface, understand how all pieces connect, and use Claude Code to extend and modify the product.
 
 ## Key concepts glossary
 
@@ -185,49 +171,39 @@ These terms appear throughout the lessons. Refer back here when you encounter th
   ```
   Files ending in `.md` are Markdown files. The `content/` folder contains generated articles in Markdown.
 
-- **CSV** — Comma-separated values. A simple spreadsheet format:
-  ```
-  topic,keywords
-  SEO Guide 2026,"seo,ranking"
-  ```
-  Used for batch article creation.
-
 ### AI/LLM terms
 
-- **LLM** — Large Language Model. The AI "brain" that predicts text. Claude, GPT, and Grok are all LLMs.
-- **Token** — The unit LLMs process (~¾ of a word). API costs are measured per token.
+- **LLM** — Large Language Model. The AI "brain" that predicts text. Claude and GPT are LLMs.
+- **Token** — The unit LLMs process (~3/4 of a word). API costs are measured per token.
 - **Context window** — Maximum input+output size an LLM can handle at once. Claude Sonnet has 200K tokens.
 - **Knowledge cutoff** — The date training data ends. LLMs are "blind" after this date.
 - **Temperature** — Controls creativity: 0 = focused/deterministic, 1 = creative/varied.
 - **Hallucination** — When an LLM generates confident but incorrect information. Always fact-check.
-- **Embedding** — Text converted to numbers capturing meaning. Powers semantic search and similarity.
 - **Prompt** — Everything you send to an LLM. Better prompts = better output.
 - **System prompt** — Persistent instructions that shape behavior (agent's `instructions`).
-- **Prompt engineering** — The skill of writing effective prompts. The new SEO skill.
 
 ### Agent terms
 
 - **Agent** — A program that uses an AI model to think and act. Has a name, model, instructions, and optionally tools.
-- **Model** — The AI brain. We use Claude Sonnet (fast, good with tools) and Grok-4 (good writer).
+- **Model** — The AI brain. We use Claude Sonnet for all agents (fast, good with tools, good writer).
 - **Instructions** — Directives that shape how an agent behaves. Like a job description.
-- **Tools** — Capabilities you give an agent (web search, image search, API calls). The agent decides when to use them.
+- **Tools** — Capabilities you give an agent (web search, image search, save articles). The agent decides when to use them.
 - **Structured output / output_schema** — Forces an agent to return data in a specific format (not free-form text).
-- **Pipeline** — Multiple agents running in sequence, each passing output to the next.
-- **Team** — Multiple agents working together under a leader who delegates tasks (used in the chat interface).
+- **Team** — Multiple agents working together under a leader who delegates tasks.
+- **AgentOS** — Agno's tool that wraps a Team into a web API automatically.
 
 ### Development terms
 
 - **Claude Code** — Anthropic's CLI AI assistant that reads your codebase and makes changes.
 - **CLAUDE.md** — Instructions file for Claude Code (like `instructions` for an agent).
-- **MCP** — Model Context Protocol. Connects Claude Code to external documentation sources.
+- **Vibecoding** — Using AI tools like Claude Code to generate code by describing what you want.
 
 ### SEO terms (for non-SEO learners)
 
 - **SEO** — Search Engine Optimization. Making web pages rank higher on Google.
 - **Keywords** — Words/phrases people search for on Google. An article targets specific keywords.
-- **Meta description** — The 1-2 sentence summary shown in Google search results (max 160 characters).
+- **AIO** — AI Overview. Google's AI-generated answer at the top of search results.
 - **On-page SEO** — Optimizations made directly on the web page (titles, headings, content, images).
-- **Backlinks** — Links from other websites to yours. A key ranking factor.
 
 ## How to run each cell
 
@@ -239,52 +215,46 @@ In Jupyter Notebook:
 ## Tips for success
 
 1. **Run every cell**, even if you think you understand it. Seeing the output builds intuition.
-2. **Read the error message** before asking for help. Python errors usually tell you exactly what went wrong (wrong variable name, missing package, etc.).
+2. **Read the error message** before asking for help. Python errors usually tell you exactly what went wrong.
 3. **Experiment freely in Modules 1-2**. Change values, break things, see what happens. No API cost.
-4. **Be careful with API costs in Modules 3-5**. Each `agent.run()` call costs money. Don't run cells in a loop or re-run unnecessarily.
-5. **Don't memorize syntax**. Focus on understanding *what* each piece does. You can always look up *how* to write it.
-6. **Module 2 is conceptual but essential**. It explains *why* the pipeline works the way it does. Don't skip it.
+4. **Be careful with API costs in Modules 3-5**. Each `agent.run()` call costs money. Don't run cells in a loop.
+5. **Don't memorize syntax**. Focus on understanding *what* each piece does.
+6. **Module 2 is conceptual but essential**. It explains *why* the system works the way it does. Don't skip it.
 
-## After completing all 20 lessons
+## After completing all 21 lessons
 
-You now understand the full system. Here's how the lesson code maps to the production files in `output/`:
+You now understand the full system. Here's how the lesson code maps to the production files:
 
 | Lesson | Builds toward | Production file |
 |--------|---------------|-----------------|
 | 05-07 | LLM understanding, prompts, model choices | (Informs all design decisions) |
-| 08-09 | Agent creation, tools | `output/agents/researcher.py` |
-| 10, 13 | Pydantic schemas | `output/agents/schemas.py` |
-| 11-12, 13-15 | Agent chaining, pipeline | `output/pipeline.py` |
-| 14 | Writer + image agents | `output/agents/writer.py`, `output/agents/image.py` |
-| 16 | Airtable database layer | `output/tools/airtable.py` |
-| 17 | How everything connects | All files in `output/` |
-| 18 | Chat interface, workspace tools | `output/agents/team.py`, `output/tools/workspace.py` |
-| 19-20 | AI-assisted development | `CLAUDE.md` (the blueprint for Claude Code) |
+| 08-09 | Agent creation, tools | `output/backend/agents/content_writer.py` |
+| 10 | Pydantic schemas | Used across all agents |
+| 11-13 | API calling, chaining, mini pipeline | `output/backend/agents/team.py` |
+| 15 | Content Writer agent | `output/backend/agents/content_writer.py` |
+| 17 | Team & batch processing | `output/backend/agents/team.py` |
+| 18 | Local file storage | `output/backend/tools/storage.py` |
+| 19 | How everything connects | All files in `output/backend/` |
+| 20 | Web interface | `output/backend/serve.py`, `output/frontend/` |
+| 21 | Extending the product | `CLAUDE.md` (the blueprint for Claude Code) |
 
 To start using the product:
 
 ```bash
-# Use the chat interface
-python output/chat.py
+# Start the web app
+python output/backend/serve.py        # Terminal 1: backend on port 7777
+cd output/frontend && npm run dev     # Terminal 2: frontend on port 5173
 ```
 
-To extend the product, use Claude Code:
-
-```bash
-npm install -g @anthropic-ai/claude-code
-cd your-project-folder
-claude
-```
+Open `http://localhost:5173` in your browser.
 
 ## Troubleshooting
 
 | Problem | Solution |
 |---------|----------|
 | `ModuleNotFoundError: No module named 'agno'` | Run `python -m pip install -r requirements.txt` |
-| `ModuleNotFoundError: No module named 'ddgs'` | Run `python -m pip install ddgs` |
 | API key error / authentication failed | Check your `.env` file. Make sure there are no spaces around `=` and no quotes around the key value. |
 | `python` command not found | Try `python3` instead, or check that Python is installed and on your PATH. |
 | Jupyter won't start | Run `python -m pip install jupyter` then `jupyter notebook lessons_en/` |
-| Cell runs forever (>2 minutes) | The agent might be waiting for a web search. Click the stop button (square icon) and try again. DuckDuckGo sometimes rate-limits. |
-| `Error: status -> error` when creating article | Ask the chat interface to check the article status to see the error message. Usually an API key issue. |
+| Cell runs forever (>2 minutes) | The agent might be waiting for an API call. Click the stop button (square icon) and try again. |
 | `sys.path.insert` not working | Make sure you're running the notebook from the correct directory. Jupyter should be launched from the project root. |

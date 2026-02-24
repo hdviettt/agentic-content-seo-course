@@ -31,10 +31,15 @@ class DataForSEOImageTools(Toolkit):
         """
         try:
             response = httpx.post(
-                f"{self.base_url}/serp/google/images/live",
+                f"{self.base_url}/serp/google/images/live/advanced",
                 auth=self.auth,
-                json=[{"keyword": query, "depth": max_results}],
-                timeout=15,
+                json=[{
+                    "keyword": query,
+                    "location_code": 2840,
+                    "language_code": "en",
+                    "depth": max_results,
+                }],
+                timeout=60,
             )
             response.raise_for_status()
             data = response.json()
@@ -42,15 +47,15 @@ class DataForSEOImageTools(Toolkit):
             results = []
             tasks = data.get("tasks", [])
             if tasks and tasks[0].get("result"):
-                for item in tasks[0]["result"]:
-                    for img in item.get("items", []):
-                        results.append(
-                            {
-                                "title": img.get("title", ""),
-                                "url": img.get("source_url", ""),
-                                "source": img.get("source", ""),
-                            }
-                        )
+                for item in tasks[0]["result"][0].get("items", []):
+                    if item.get("type") != "images_search":
+                        continue
+                    results.append({
+                        "title": item.get("title", ""),
+                        "url": item.get("source_url", ""),
+                        "alt": item.get("alt", ""),
+                        "source": item.get("subtitle", ""),
+                    })
             return json.dumps(results[:max_results])
         except Exception as e:
             logger.warning(f"DataForSEO image search failed: {e}")
