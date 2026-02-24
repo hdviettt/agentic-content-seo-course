@@ -15,49 +15,28 @@ jupyter notebook lessons_en/                             # Open teaching noteboo
 
 ### Chat interface
 
-**`output/chat.py`** — Entry point only (~60 lines). Validates API keys + Airtable, imports team from `agents/team.py`, starts chat. The team (Opus 4.6 leader + 3 Sonnet members) is defined in `output/agents/team.py`. Members defined in individual files: `content_creator.py`, `status_tracker.py`, `aio_analyst.py`. Members have focused tools from `tools/workspace.py` that wrap pipeline and Airtable calls. Content Creator also handles retry and CSV import. Chat history persisted in `chat_sessions.db` (SQLite, via Agno's `SqliteDb`). This is the **primary interface**.
+**`output/chat.py`** — Entry point (~50 lines). Validates Anthropic API key + Airtable, imports team from `agents/team.py`, starts chat via `team.cli_app()`. The team (Sonnet leader + 3 Sonnet members) is defined in `output/agents/team.py`. Members are defined in individual files: `content_writer.py`, `image_finder.py`, `aio_analyzer.py`. Each member has focused tools imported directly from `tools/`. Chat history persisted in `chat_sessions.db` (SQLite, via Agno's `SqliteDb`). This is the **primary interface**.
 
-### Content pipeline (`output/pipeline.py`)
+### Agent definitions (`output/agents/`) — "who"
 
-Plain Python function that runs 4 sequential agent steps with Airtable status updates between each:
+One agent per file. `__init__.py` re-exports everything so `from agents import content_writer` works.
+- **`content_writer.py`**: Content Writer (Claude Sonnet + DuckDuckGo + Airtable tools). Researches topics and writes SEO articles.
+- **`image_finder.py`**: Image Finder (Claude Sonnet + DataForSEO Images + Airtable tools). Finds and inserts images into articles. Optional — returns `None` if no DataForSEO key.
+- **`aio_analyzer.py`**: AIO Analyzer (Claude Sonnet + AIO tool functions). Analyzes Google AI Overviews and suggests optimizations.
+- **`team.py`**: Agno Team assembly (Sonnet leader + 3 Sonnet members, Image Finder conditional)
+- **All agents use Claude Sonnet** (Anthropic provider). No other API providers.
 
-```
-queued -> researching -> outlining -> writing -> enriching -> review
-          research_agent  outline_agent  writer_agent  image_agent
-          (Sonnet + DDG   (Sonnet)       (Grok-4)      (Sonnet)
-           + AIOTools)
-                              | Airtable updated at each step
-```
+### Tool definitions (`output/tools/`) — "what"
 
-On error at any step: `status -> error` with `error_message` saved. Batch processing (`run_batch()` in same file) supports both sequential (default) and parallel mode (`parallel=True` uses `ThreadPoolExecutor` to process multiple articles simultaneously). Articles saved to `content/`.
-
-### Agent definitions (`output/agents/`)
-
-One agent per file. `__init__.py` re-exports everything so `from agents import research_agent` works.
-- **`schemas.py`**: `ContentOutline`, `EnrichedContent`, `OutlineSection`, `ImageSuggestion` (Pydantic models)
-- **`researcher.py`**: Research Agent (Claude Sonnet + DuckDuckGo + optional AIOTools)
-- **`outliner.py`**: Outline Agent (Claude Sonnet + `output_schema`)
-- **`writer.py`**: Writer Agent (Grok-4, plain Markdown, no tools, no `output_schema`)
-- **`image.py`**: Image Agent + `FreepikTools`, `DataForSEOTools`, `get_dataforseo_credentials()`, `build_image_agent()`
-- **`content_creator.py`**: Chat team member (creates articles, retries, CSV import)
-- **`status_tracker.py`**: Chat team member (queries articles, version history)
-- **`aio_analyst.py`**: Chat team member (AI Overview analysis, optimization)
-- **`team.py`**: Agno Team assembly (Opus 4.6 leader + 3 Sonnet members)
-- **Claude Sonnet** for research, outline, image, and chat member agents.
-- **Grok-4** for writer agent only (cannot combine tools with structured output).
-- **Opus 4.6** only for conversational team leader in `agents/team.py`.
+Tools are capabilities that agents use. Custom toolkits inherit `agno.tools.Toolkit`. Plain functions are passed directly as `tools=[...]`.
+- **`airtable.py`**: Airtable CRUD + one-time setup (primary data store). Agent-facing tool functions: `save_article()`, `list_all_articles()`, `get_article_content()`, `update_article_content()`. Internal CRUD: `create_article()`, `update_article_status()`, `get_article()`, `list_articles()`, `save_aio_analysis()`, `get_aio_analyses()`, `validate()`, `setup()`.
+- **`aio.py`**: Google AI Overview analysis via DataForSEO. `AIOTools` toolkit, `get_dataforseo_credentials()`, and agent-facing tool functions: `analyze_keyword_aio()`, `optimize_for_aio()`.
+- **`images.py`**: `DataForSEOImageTools` toolkit for image search via DataForSEO.
+- **`__init__.py`**: Package marker.
 
 ### Database layer (`output/tools/airtable.py`)
 
-Airtable is the primary data store. Article IDs are **strings** (Airtable record IDs like `"recABC123"`). No `init_db()` needed — just requires `AIRTABLE_PAT` and `AIRTABLE_BASE_ID` env vars. Functions: `create_article()`, `update_article_status()`, `get_article()`, `list_articles()`, `save_article_version()`, `get_article_versions()`, `save_aio_analysis()`, `get_aio_analyses()`, `validate()`, `setup()`. Tables: **Articles**, **Versions** (linked to Articles), **AIO Analyses** (linked to Articles). SQLite is only used for Agno chat memory in `chat.py`.
-
-### AIO analysis (`output/tools/aio.py`)
-
-Uses DataForSEO SERP API to fetch Google AI Overview content for keywords. `AIOTools` toolkit used by research agent (optional). Standalone functions `get_ai_overview()`, `save_aio_analysis()`, `get_aio_analyses()` used by workspace tools. Requires `DATA_FOR_SEO_API_KEY`.
-
-### Tools pattern
-
-Custom toolkits inherit `agno.tools.Toolkit`, pass function refs to `super().__init__(name=..., tools=[...])`. All tool functions return JSON strings. Workspace tools (`output/tools/workspace.py`) are plain Python functions passed directly as `tools=[...]` to team members.
+Airtable is the primary data store. Article IDs are **strings** (Airtable record IDs like `"recABC123"`). No `init_db()` needed — just requires `AIRTABLE_PAT` and `AIRTABLE_BASE_ID` env vars. Tables: **Articles**, **AIO Analyses** (linked to Articles). SQLite is only used for Agno chat memory in `chat.py`.
 
 ### Teaching curriculum (`lessons_en/` and `lessons_vi/`)
 
@@ -79,25 +58,19 @@ agentic-content-seo/
 |   ├── 03-xay-dung-agent/
 |   ├── 04-xay-dung-san-pham/
 |   └── 05-san-pham-hoan-chinh/
-├── output/                     <- The finished product (16 Python files)
-|   ├── chat.py                 <- Entry point (~60 lines, validation + start)
-|   ├── pipeline.py             Content pipeline orchestrator
-|   ├── agents/                 <- One agent per file
+├── output/                     <- The finished product (10 Python files)
+|   ├── chat.py                 <- Entry point (~50 lines, validation + start)
+|   ├── agents/                 <- Agent definitions (who)
 |   |   ├── __init__.py         Re-exports everything
-|   |   ├── schemas.py          Pydantic models (ContentOutline, EnrichedContent, etc.)
-|   |   ├── researcher.py       Research Agent (Claude Sonnet + DuckDuckGo + optional AIOTools)
-|   |   ├── outliner.py         Outline Agent (Claude Sonnet + structured output)
-|   |   ├── writer.py           Writer Agent (Grok-4, plain Markdown)
-|   |   ├── image.py            Image Agent + FreepikTools + DataForSEOTools
-|   |   ├── content_creator.py  Chat team member (creates articles)
-|   |   ├── status_tracker.py   Chat team member (queries articles)
-|   |   ├── aio_analyst.py      Chat team member (AI Overview analysis)
-|   |   └── team.py             Agno Team assembly (Opus leader + 3 members)
-|   └── tools/                  <- Toolkits, integrations, and utilities
+|   |   ├── content_writer.py   Content Writer (DuckDuckGo + Airtable tools)
+|   |   ├── image_finder.py     Image Finder (DataForSEO Images + Airtable tools)
+|   |   ├── aio_analyzer.py     AIO Analyzer (AIO analysis tools)
+|   |   └── team.py             Agno Team assembly (Sonnet leader + 3 members)
+|   └── tools/                  <- Tool definitions (what)
 |       ├── __init__.py         Package marker
-|       ├── airtable.py         Airtable CRUD + one-time setup (primary data store)
-|       ├── workspace.py        Chat team member tools
-|       └── aio.py              Google AI Overview analysis via DataForSEO
+|       ├── airtable.py         Airtable CRUD + agent-facing tool functions
+|       ├── aio.py              AIO analysis + credentials + agent-facing tools
+|       └── images.py           DataForSEO image search toolkit
 ├── content/                    <- Generated articles (.md files)
 ├── requirements.txt
 ├── README.md
@@ -108,20 +81,17 @@ agentic-content-seo/
 
 ## Key Framework Gotchas
 
-- **Grok limitation**: Cannot combine `tools` and `output_schema` in one agent. Writer stays tool-free.
-- **Claude can combine both**: No need for split agent pairs when using Claude/Anthropic provider.
-- **xAI provider** requires `openai` pip package (transitive dep, already in requirements).
+- **All agents use Claude** (Anthropic provider). No other providers needed.
 - **`DuckDuckGoTools`** requires `ddgs` package (not `duckduckgo-search`).
 - **`agno.workflow`** requires `fastapi` as a transitive dependency.
 - **Agno Team v2**: `mode` param is deprecated. Use `respond_directly=True` for routing, `delegate_to_all_members=True` for collaborate. `show_members_responses` -> `store_member_responses`.
-- **Image agent is optional**: `build_image_agent()` returns `None` if no image API keys are set. Pipeline skips enrichment gracefully.
-- **AIO in research is optional**: `build_research_agent()` adds `AIOTools` only if `DATA_FOR_SEO_API_KEY` is set.
-- **Airtable rate limits**: 5 requests/second. Parallel batch may need small delays for large batches.
+- **Image Finder is optional**: `build_image_finder()` returns `None` if no DataForSEO key is set. Team skips it gracefully.
+- **`get_dataforseo_credentials()`** lives in `tools/aio.py` (shared by both AIO and image search).
 - **Article IDs are strings**: Airtable record IDs (e.g., `"recABC123"`), not integers.
 
 ## Environment
 
 - Python 3.14, Windows. Use `python -m pip` (pip not on PATH).
-- APIs in `.env`: `ANTHROPIC_API_KEY` + `XAI_API_KEY` (required for pipeline), `FREEPIK_API_KEY` + `DATA_FOR_SEO_API_KEY` (optional, for images and AI Overview analysis).
+- APIs in `.env`: `ANTHROPIC_API_KEY` (required for all agents), `DATA_FOR_SEO_API_KEY` (optional, for images and AI Overview analysis).
 - Airtable in `.env`: `AIRTABLE_PAT` + `AIRTABLE_BASE_ID` (required for article storage). Run `python output/tools/airtable.py` to create the base tables.
-- DataForSEO key format: `Basic <base64(login:password)>` — decoded by `agents.image.get_dataforseo_credentials()`.
+- DataForSEO key format: `Basic <base64(login:password)>` — decoded by `tools.aio.get_dataforseo_credentials()`.

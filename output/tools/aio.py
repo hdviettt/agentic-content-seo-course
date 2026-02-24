@@ -4,16 +4,43 @@ AIO (AI Overview) analysis -- checks what Google's AI says about a topic.
 Queries the DataForSEO SERP API to extract Google AI Overview content for
 keywords. Results can be saved to Airtable via tools.airtable.
 
-Reuses credentials from agents.get_dataforseo_credentials().
+Also houses get_dataforseo_credentials() since both AIO and image search
+use DataForSEO.
 """
 
+import base64
 import json
+import os
 
 import httpx
 from agno.tools import Toolkit
 from agno.utils.log import logger
 
-from agents.image import get_dataforseo_credentials
+
+def get_dataforseo_credentials() -> tuple[str, str] | None:
+    """Decode DATA_FOR_SEO_API_KEY into a (login, password) tuple.
+
+    The env var format is:  Basic <base64(login:password)>
+    Returns None if the env var is missing or malformed.
+    """
+    raw = os.getenv("DATA_FOR_SEO_API_KEY", "").strip()
+    if not raw:
+        return None
+
+    # Strip the "Basic " prefix if present
+    if raw.startswith("Basic "):
+        raw = raw[len("Basic "):]
+
+    try:
+        decoded = base64.b64decode(raw).decode("utf-8")
+    except Exception:
+        return None
+
+    if ":" not in decoded:
+        return None
+
+    login, password = decoded.split(":", 1)
+    return (login, password)
 
 
 class AIOTools(Toolkit):
@@ -99,7 +126,7 @@ class AIOTools(Toolkit):
 
 
 # ============================================================
-# Standalone functions (used by workspace tools)
+# Standalone functions (used internally)
 # ============================================================
 
 
@@ -119,8 +146,8 @@ def get_ai_overview(keyword, location_code=2840, language_code="en"):
     return json.loads(result_json)
 
 
-def save_aio_analysis(article_id, keyword, aio_data):
-    """Save an AIO analysis result to Airtable.
+def _save_aio_analysis(article_id, keyword, aio_data):
+    """Save an AIO analysis result to Airtable (internal helper).
 
     Args:
         article_id: The article this analysis is for.
@@ -128,18 +155,20 @@ def save_aio_analysis(article_id, keyword, aio_data):
         aio_data: Dict from get_ai_overview() with has_aio, content_markdown, etc.
 
     Returns:
-        JSON string with the record ID, or error message.
+        The Airtable record ID, or None.
     """
     from tools.airtable import save_aio_analysis as db_save
 
-    record_id = db_save(
+    refs = aio_data.get("references", [])
+    refs_json = json.dumps(refs) if isinstance(refs, list) else refs
+
+    return db_save(
         article_id=article_id,
         keyword=keyword,
         aio_content=aio_data.get("content_markdown", ""),
-        references_json=json.dumps(aio_data.get("references", [])),
+        references_json=refs_json,
         has_aio=aio_data.get("has_aio", False),
     )
-    return json.dumps({"record_id": record_id, "keyword": keyword})
 
 
 def get_aio_analyses(article_id):
@@ -151,3 +180,98 @@ def get_aio_analyses(article_id):
     from tools.airtable import get_aio_analyses as db_get
 
     return db_get(article_id=article_id)
+
+
+# ============================================================
+# Agent-facing tool functions (return JSON strings)
+# ============================================================
+
+
+def analyze_keyword_aio(keyword: str, article_id: str = "") -> str:
+    """Analyze what Google's AI Overview says about a keyword.
+
+    Calls the DataForSEO SERP API to fetch the AI Overview for the keyword,
+    then saves the result to Airtable if an article_id is provided.
+
+    Args:
+        keyword: The search term to analyze.
+        article_id: Optional article ID to link the analysis to.
+
+    Returns:
+        JSON with the AI Overview content, references, and whether an AIO exists.
+    """
+    result = get_ai_overview(keyword)
+    if result is None:
+        return json.dumps({"error": "DataForSEO not configured. Set DATA_FOR_SEO_API_KEY in .env."})
+
+    # Save to Airtable if linked to an article
+    if article_id:
+        _save_aio_analysis(article_id, keyword, result)
+
+    return json.dumps(result)
+
+
+def optimize_for_aio(article_id: str) -> str:
+    """Compare an article against current AI Overviews for its keywords.
+
+    Fetches fresh AIO data for each of the article's target keywords and
+    returns a comparison showing what the AI Overview covers vs what the
+    article covers, plus content gaps and cited sources.
+
+    Args:
+        article_id: The article ID to optimize.
+
+    Returns:
+        JSON with per-keyword AIO comparison data and the article's markdown.
+    """
+    from tools.airtable import get_article
+
+    article = get_article(article_id)
+    if not article:
+        return json.dumps({"error": f"Article {article_id} not found."})
+
+    # Parse keywords
+    kw_raw = article.get("target_keywords")
+    keywords = []
+    if kw_raw:
+        try:
+            keywords = json.loads(kw_raw)
+        except (json.JSONDecodeError, TypeError):
+            pass
+
+    if not keywords:
+        return json.dumps({"error": "Article has no target keywords to analyze."})
+
+    comparisons = []
+    for kw in keywords:
+        aio_data = get_ai_overview(kw)
+        if aio_data is None:
+            comparisons.append({
+                "keyword": kw,
+                "error": "DataForSEO not configured.",
+            })
+            continue
+
+        # Save analysis to Airtable
+        _save_aio_analysis(article_id, kw, aio_data)
+
+        comparisons.append({
+            "keyword": kw,
+            "has_aio": aio_data.get("has_aio", False),
+            "aio_content": aio_data.get("content_markdown", ""),
+            "aio_references": aio_data.get("references", []),
+            "article_has_content": bool(article.get("article_markdown")),
+            "article_word_count": article.get("word_count"),
+        })
+
+    # Extract section headings -- agent doesn't need the full article to analyze gaps
+    markdown = article.get("article_markdown", "")
+    headings = [line.strip()[3:].strip() for line in markdown.split("\n") if line.strip().startswith("## ")]
+
+    return json.dumps({
+        "article_id": article_id,
+        "topic": article["topic"],
+        "article_sections": headings,
+        "article_word_count": article.get("word_count"),
+        "comparisons": comparisons,
+    })

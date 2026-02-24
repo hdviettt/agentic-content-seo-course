@@ -1,7 +1,7 @@
 """
 Conversational SEO workspace -- natural-language interface via an Agno Team.
 
-The team leader (Opus) delegates requests to specialized member agents
+The team leader (Sonnet) delegates requests to specialized member agents
 (Sonnet), each equipped with a focused subset of workspace tools.
 
 Usage:
@@ -18,18 +18,10 @@ load_dotenv()
 
 def validate_api_keys():
     """Check that required API keys are set. Exit with a friendly message if not."""
-    missing = []
     if not os.getenv("ANTHROPIC_API_KEY", "").strip():
-        missing.append("ANTHROPIC_API_KEY")
-    if not os.getenv("XAI_API_KEY", "").strip():
-        missing.append("XAI_API_KEY")
-
-    if missing:
-        print("Missing required API keys:\n")
-        for key in missing:
-            print(f"  - {key}")
-        print(f"\nAdd them to your .env file (see .env.example for reference).")
-        print("Get keys at: https://console.anthropic.com and https://console.x.ai")
+        print("Missing required API key: ANTHROPIC_API_KEY\n")
+        print("Add it to your .env file.")
+        print("Get your key at: https://console.anthropic.com")
         sys.exit(1)
 
 

@@ -83,7 +83,6 @@ _FIELD_MAP = {
     "word_count": "Word Count",
     "meta_description": "Meta Description",
     "error_message": "Error Message",
-    "batch_id": "Batch ID",
 }
 
 
@@ -109,7 +108,6 @@ def _record_to_dict(record):
         "output_file": f.get("Output File"),
         "word_count": f.get("Word Count"),
         "meta_description": f.get("Meta Description"),
-        "batch_id": f.get("Batch ID"),
         "error_message": f.get("Error Message"),
         "created_at": f.get("Created"),
         "updated_at": f.get("Updated"),
@@ -121,7 +119,7 @@ def _record_to_dict(record):
 # ============================================================
 
 
-def create_article(topic, target_keywords=None, batch_id=None):
+def create_article(topic, target_keywords=None):
     """Insert a new article in 'queued' status. Returns the record ID (string)."""
     table = _get_table("Articles")
     if table is None:
@@ -137,9 +135,6 @@ def create_article(topic, target_keywords=None, batch_id=None):
             fields["Target Keywords"] = ", ".join(target_keywords)
         else:
             fields["Target Keywords"] = str(target_keywords)
-
-    if batch_id:
-        fields["Batch ID"] = batch_id
 
     record = table.create(fields)
     return record["id"]
@@ -181,78 +176,18 @@ def get_article(article_id):
         return None
 
 
-def list_articles(status=None, batch_id=None):
-    """List articles, optionally filtered by status and/or batch_id."""
+def list_articles(status=None):
+    """List articles, optionally filtered by status."""
     table = _get_table("Articles")
     if table is None:
         return []
 
-    formula_parts = []
-    if status:
-        formula_parts.append(f"{{Status}} = '{status}'")
-    if batch_id:
-        formula_parts.append(f"{{Batch ID}} = '{batch_id}'")
-
     kwargs = {}
-    if formula_parts:
-        if len(formula_parts) == 1:
-            kwargs["formula"] = formula_parts[0]
-        else:
-            kwargs["formula"] = "AND(" + ", ".join(formula_parts) + ")"
+    if status:
+        kwargs["formula"] = f"{{Status}} = '{status}'"
 
     records = table.all(**kwargs)
     return [_record_to_dict(r) for r in records]
-
-
-# ============================================================
-# Article Versions
-# ============================================================
-
-
-def save_article_version(article_id, markdown, change_summary):
-    """Snapshot the current article content as a new version. Returns version record ID."""
-    table = _get_table("Versions")
-    if table is None:
-        return None
-
-    # Count existing versions for this article to get next version number
-    existing = table.all(formula=f"{{Article ID}} = '{article_id}'")
-    version_number = len(existing) + 1
-
-    fields = {
-        "Articles": [article_id],       # Linked record (for Airtable UI)
-        "Article ID": article_id,        # Plain text (for formula filtering)
-        "Content": markdown[:99000] if markdown else "",
-        "Change Summary": change_summary or "",
-        "Word Count": len(markdown.split()) if markdown else 0,
-        "Version Number": version_number,
-        "Created": _now(),
-    }
-
-    record = table.create(fields)
-    return record["id"]
-
-
-def get_article_versions(article_id):
-    """Get all versions of an article, ordered oldest-first."""
-    table = _get_table("Versions")
-    if table is None:
-        return []
-
-    records = table.all(formula=f"{{Article ID}} = '{article_id}'")
-    records.sort(key=lambda r: r.get("fields", {}).get("Version Number", 0))
-
-    return [
-        {
-            "id": r["id"],
-            "article_id": article_id,
-            "version_number": r["fields"].get("Version Number", 0),
-            "article_markdown": r["fields"].get("Content", ""),
-            "change_summary": r["fields"].get("Change Summary", ""),
-            "created_at": r["fields"].get("Created", ""),
-        }
-        for r in records
-    ]
 
 
 # ============================================================
@@ -340,7 +275,6 @@ _ARTICLES_FIELDS = [
     {"name": "Word Count", "type": "number", "options": {"precision": 0}},
     {"name": "Meta Description", "type": "singleLineText"},
     {"name": "Output File", "type": "singleLineText"},
-    {"name": "Batch ID", "type": "singleLineText"},
     {"name": "Error Message", "type": "multilineText"},
     {"name": "Created", "type": "dateTime", "options": {
         "dateFormat": {"name": "iso"},
@@ -348,19 +282,6 @@ _ARTICLES_FIELDS = [
         "timeZone": "utc",
     }},
     {"name": "Updated", "type": "dateTime", "options": {
-        "dateFormat": {"name": "iso"},
-        "timeFormat": {"name": "24hour"},
-        "timeZone": "utc",
-    }},
-]
-
-_VERSIONS_FIELDS = [
-    {"name": "Content", "type": "multilineText"},
-    {"name": "Change Summary", "type": "singleLineText"},
-    {"name": "Word Count", "type": "number", "options": {"precision": 0}},
-    {"name": "Version Number", "type": "number", "options": {"precision": 0}},
-    {"name": "Article ID", "type": "singleLineText"},
-    {"name": "Created", "type": "dateTime", "options": {
         "dateFormat": {"name": "iso"},
         "timeFormat": {"name": "24hour"},
         "timeZone": "utc",
@@ -395,7 +316,7 @@ def _list_bases(pat):
 
 
 def setup():
-    """One-time setup: create Articles, Versions, and AIO Analyses tables.
+    """One-time setup: create Articles and AIO Analyses tables.
 
     Run this once, then add the printed AIRTABLE_BASE_ID to your .env file.
     """
@@ -443,7 +364,6 @@ def setup():
     # Step 3: Create tables
     tables_to_create = {
         "Articles": (_ARTICLES_FIELDS, "SEO content articles"),
-        "Versions": (_VERSIONS_FIELDS, "Article version history"),
         "AIO Analyses": (_AIO_ANALYSES_FIELDS, "Google AI Overview analyses"),
     }
 
@@ -478,15 +398,6 @@ def setup():
             )
             print("Added Articles -> AIO Analyses link.")
 
-        # Articles -> Versions link
-        if "Versions" not in existing_fields.get("Articles", set()):
-            articles_table.create_field(
-                name="Versions",
-                field_type="multipleRecordLinks",
-                options={"linkedTableId": table_ids["Versions"]},
-            )
-            print("Added Articles -> Versions link.")
-
     except Exception as e:
         print(f"Warning: Could not add linked fields: {e}")
         print("You can add them manually in Airtable if needed.")
@@ -495,6 +406,133 @@ def setup():
     print(f"AIRTABLE_BASE_ID={base_id}")
     print()
     return base_id
+
+
+# ============================================================
+# Agent-facing tool functions (return JSON strings)
+# ============================================================
+
+
+def save_article(topic: str, article_markdown: str, keywords: str = "") -> str:
+    """Save a new article to Airtable and write the .md file.
+
+    Args:
+        topic: The article topic.
+        article_markdown: The full article content in Markdown.
+        keywords: Optional comma-separated target keywords.
+
+    Returns:
+        JSON with article_id, filename, and word_count.
+    """
+    kw_list = [k.strip() for k in keywords.split(",") if k.strip()] if keywords else None
+    article_id = create_article(topic, target_keywords=kw_list)
+
+    # Save to file
+    content_dir = os.path.join(os.path.dirname(__file__), "..", "..", "content")
+    os.makedirs(content_dir, exist_ok=True)
+
+    timestamp = datetime.now().strftime("%Y-%m-%d-%H%M%S")
+    filename = os.path.join(content_dir, f"{timestamp}.md")
+
+    with open(filename, "w", encoding="utf-8") as f:
+        f.write(article_markdown)
+
+    word_count = len(article_markdown.split())
+
+    update_article_status(
+        article_id, "review",
+        article_markdown=article_markdown,
+        output_file=filename,
+        word_count=word_count,
+    )
+
+    return json.dumps({
+        "article_id": article_id,
+        "topic": topic,
+        "filename": filename,
+        "word_count": word_count,
+        "status": "review",
+    })
+
+
+def list_all_articles(status_filter: str = "") -> str:
+    """List all articles in the workspace, optionally filtered by status.
+
+    Args:
+        status_filter: Filter by status (queued, review, error). Leave empty for all.
+
+    Returns:
+        JSON array of article summaries.
+    """
+    articles = list_articles(status=status_filter or None)
+    return json.dumps([
+        {
+            "id": a["id"],
+            "topic": a["topic"],
+            "status": a["status"],
+            "word_count": a["word_count"],
+            "created_at": a["created_at"],
+            "updated_at": a["updated_at"],
+        }
+        for a in articles
+    ])
+
+
+def get_article_content(article_id: str) -> str:
+    """Get an article's topic and full Markdown content.
+
+    Args:
+        article_id: The Airtable record ID of the article.
+
+    Returns:
+        JSON with article_id, topic, and article_markdown.
+    """
+    article = get_article(article_id)
+    if not article:
+        return json.dumps({"error": f"Article {article_id} not found."})
+
+    return json.dumps({
+        "article_id": article_id,
+        "topic": article["topic"],
+        "article_markdown": article.get("article_markdown", ""),
+    })
+
+
+def update_article_content(article_id: str, article_markdown: str) -> str:
+    """Update an article's Markdown content in Airtable and overwrite the .md file.
+
+    Args:
+        article_id: The Airtable record ID of the article.
+        article_markdown: The updated article Markdown.
+
+    Returns:
+        JSON with article_id and updated word_count.
+    """
+    article = get_article(article_id)
+    if not article:
+        return json.dumps({"error": f"Article {article_id} not found."})
+
+    word_count = len(article_markdown.split())
+
+    update_article_status(
+        article_id, article["status"],
+        article_markdown=article_markdown,
+        word_count=word_count,
+    )
+
+    # Overwrite the .md file if it exists
+    output_file = article.get("output_file")
+    if output_file:
+        try:
+            with open(output_file, "w", encoding="utf-8") as f:
+                f.write(article_markdown)
+        except OSError:
+            pass  # File may not exist yet, that's OK
+
+    return json.dumps({
+        "article_id": article_id,
+        "word_count": word_count,
+    })
 
 
 if __name__ == "__main__":
