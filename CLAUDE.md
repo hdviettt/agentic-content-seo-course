@@ -49,7 +49,7 @@ Local file storage. Article IDs are **keyword slugs** (e.g., `"on-page-seo-meta-
 
 ### Teaching curriculum (`lessons_en/` and `lessons_vi/`)
 
-21 Jupyter notebooks across 5 modules, available in English (`lessons_en/`) and Vietnamese (`lessons_vi/`). Modules 1-2 (Python basics + AI fundamentals) need no API keys. Module 3 builds agents (includes API calling lesson). Module 4 starts with Claude Code (the bridge from notebooks to real files), then builds the pipeline. Module 5 completes the product and extends it. Lesson 19 is "How Everything Connects".
+22 Jupyter notebooks across 5 modules, available in English (`lessons_en/`) and Vietnamese (`lessons_vi/`). Modules 1-2 (Python basics + AI fundamentals) need no API keys. Module 3 builds agents (08-12, includes storage). Module 4 is AI-assisted development (13-18): paradigm shift, Claude Code usage, prompting/planning/learning, then building agents through Claude Code lens. Module 5 completes the product (19-22): architecture, web fundamentals, web interface, extending.
 
 ## Project structure
 
@@ -84,17 +84,17 @@ agentic-content-seo/
 |               ├── ArticleList.jsx Sidebar article list (polling)
 |               └── ArticleView.jsx Full article viewer (Markdown)
 ├── content/                       <- Generated articles (.md files + articles.json)
-├── lessons_en/                    <- Teaching curriculum (21 English notebooks)
+├── lessons_en/                    <- Teaching curriculum (22 English notebooks)
 |   ├── 01-python-basics/          (01-04: no API keys needed)
 |   ├── 02-understanding-ai/       (05-07: no API keys needed, LLM concepts)
-|   ├── 03-building-agents/        (08-13: needs ANTHROPIC_API_KEY)
-|   ├── 04-building-the-product/   (14-17: Claude Code, then pipeline agents)
-|   └── 05-complete-product/       (18-21: storage, connections, web interface, extending)
-├── lessons_vi/                    <- Vietnamese translation (same 21 notebooks)
+|   ├── 03-building-agents/        (08-12: agents, tools, structured output, chaining, storage)
+|   ├── 04-ai-assisted-development/ (13-18: Claude Code paradigm + usage + skills, then building agents)
+|   └── 05-complete-product/       (19-22: architecture, web fundamentals, web interface, extending)
+├── lessons_vi/                    <- Vietnamese translation (same 22 notebooks)
 |   ├── 01-lap-trinh-co-ban/
 |   ├── 02-hieu-ve-ai/
 |   ├── 03-xay-dung-agent/
-|   ├── 04-xay-dung-san-pham/
+|   ├── 04-phat-trien-voi-ai/
 |   └── 05-san-pham-hoan-chinh/
 ├── requirements.txt
 ├── README.md

@@ -216,7 +216,7 @@ def get_article_content(article_id: str) -> str:
     """Get an article's topic and full Markdown content.
 
     Args:
-        article_id: The article ID (timestamp string).
+        article_id: The article ID (keyword slug, e.g. "on-page-seo-meta-tags").
 
     Returns:
         JSON with article_id, topic, and article_markdown.
@@ -236,7 +236,7 @@ def update_article_content(article_id: str, article_markdown: str) -> str:
     """Update an article's Markdown content.
 
     Args:
-        article_id: The article ID (timestamp string).
+        article_id: The article ID (keyword slug, e.g. "on-page-seo-meta-tags").
         article_markdown: The updated article Markdown.
 
     Returns:

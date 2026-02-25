@@ -21,9 +21,9 @@ if image_finder is not None:
     members.append(image_finder)
 
 team = Team(
-    id="seo-workspace",
+    id="seo-workspace",              # Used in API paths: /teams/seo-workspace/runs
     name="SEO Workspace",
-    mode=TeamMode.tasks,
+    mode=TeamMode.tasks,              # Task mode: leader creates tasks, members execute in parallel
     model=Claude(id="claude-sonnet-4-5-20250929"),
     members=members,
     instructions=[
@@ -46,9 +46,9 @@ team = Team(
         "Never use emojis or icons in your responses. Keep output plain text and Markdown only.",
     ],
     db=SqliteDb(db_file=os.path.join(os.path.dirname(__file__), "..", "chat_sessions.db")),
-    add_history_to_context=True,
-    num_history_runs=5,
+    add_history_to_context=True,      # Include chat history so leader can resolve "it"/"that article"
+    num_history_runs=5,               # Keep last 5 conversation turns in context
     markdown=True,
-    store_member_responses=True,
-    max_iterations=15,
+    store_member_responses=True,      # Leader can see full member output (not just summary)
+    max_iterations=15,                # Max back-and-forth between leader and members per request
 )
