@@ -22,6 +22,18 @@ export default function App() {
       .catch(() => {});
   }, []);
 
+  // Called right before a team run starts — snapshot current articles so
+  // the diff after the run only picks up articles created during THIS run
+  const handleRunStart = useCallback(async () => {
+    try {
+      const articles = await listArticles();
+      knownIdsRef.current = new Set(articles.map((a) => a.id));
+    } catch {
+      // If fetch fails, keep whatever knownIdsRef already has
+    }
+    setNewArticleIds(new Set());
+  }, []);
+
   // Called when a team run completes — diff articles to find new ones
   const handleRunComplete = useCallback(async () => {
     try {
@@ -65,6 +77,7 @@ export default function App() {
       </aside>
       <main className="main">
         <Chat
+          onRunStart={handleRunStart}
           onRunComplete={handleRunComplete}
           onSelectArticle={handleSelect}
         />

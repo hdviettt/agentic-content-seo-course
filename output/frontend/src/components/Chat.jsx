@@ -64,7 +64,7 @@ const markdownComponents = {
   },
 };
 
-export default function Chat({ onRunComplete, onSelectArticle }) {
+export default function Chat({ onRunStart, onRunComplete, onSelectArticle }) {
   const [messages, setMessages] = useState([]);
   const [input, setInput] = useState("");
   const [loading, setLoading] = useState(false);
@@ -84,6 +84,8 @@ export default function Chat({ onRunComplete, onSelectArticle }) {
     setMessages((prev) => [...prev, { role: "user", content: prompt }]);
     setLoading(true);
     streamingRef.current = false;
+
+    if (onRunStart) await onRunStart();
 
     await streamTeamRun(prompt, {
       onChunk(text) {
