@@ -15,6 +15,8 @@ import sys
 from dotenv import load_dotenv
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import StreamingResponse
+from pydantic import BaseModel
 
 load_dotenv()
 
@@ -87,27 +89,47 @@ async def api_delete_article(article_id: str):
     return {"deleted": article_id}
 
 
-from pydantic import BaseModel
-
-
 class ChatRequest(BaseModel):
     message: str
     session_id: str | None = None
 
 
-@base_app.post("/api/chat")
-async def api_chat(req: ChatRequest):
-    """Send a message to the team and get the first meaningful response."""
-    response = await team.arun(req.message)
+@base_app.post("/api/chat/stream")
+async def api_chat_stream(req: ChatRequest):
+    """Send a message to the team and stream the response via SSE.
 
-    # TeamMode.tasks concatenates all iteration responses into content.
-    # Extract just the first assistant message (the real answer).
-    if hasattr(response, "messages") and response.messages:
-        for msg in response.messages:
-            if getattr(msg, "role", None) == "assistant" and getattr(msg, "content", None):
-                return {"content": msg.content}
+    TeamMode.tasks does not support native SSE streaming, so we call
+    team.arun() (non-streaming) and wrap the result in SSE events that
+    the frontend can parse with the same ReadableStream logic.
+    """
 
-    return {"content": response.content or ""}
+    async def generate():
+        # Signal that we've started
+        yield f"event: TeamRunStarted\ndata: {json.dumps({'event': 'TeamRunStarted'})}\n\n"
+
+        try:
+            response = await team.arun(req.message, session_id=req.session_id)
+
+            # Extract the response content
+            content = ""
+            if hasattr(response, "messages") and response.messages:
+                for msg in response.messages:
+                    if getattr(msg, "role", None) == "assistant" and getattr(msg, "content", None):
+                        content = msg.content
+                        break
+            if not content:
+                content = response.content or ""
+
+            # Send content as a single chunk
+            yield f"event: TeamRunContent\ndata: {json.dumps({'event': 'TeamRunContent', 'content': content})}\n\n"
+
+            # Signal completion
+            yield f"event: TeamRunCompleted\ndata: {json.dumps({'event': 'TeamRunCompleted', 'content': content})}\n\n"
+
+        except Exception as e:
+            yield f"event: TeamRunError\ndata: {json.dumps({'event': 'TeamRunError', 'content': str(e)})}\n\n"
+
+    return StreamingResponse(generate(), media_type="text/event-stream")
 
 
 # Wrap with AgentOS

@@ -83,9 +83,10 @@ output/                         The finished product
         ├── App.jsx             Layout (sidebar + main area)
         ├── api.js              API client (fetch + SSE streaming)
         └── components/
-            ├── Chat.jsx        Chat with SSE streaming
-            ├── ArticleList.jsx Sidebar article list
-            └── ArticleView.jsx Full article viewer
+            ├── Chat.jsx        Chat with SSE streaming + article cards
+            ├── ArticleList.jsx Sidebar article list (NEW badges)
+            ├── ArticleView.jsx Full article viewer
+            └── Toast.jsx       Toast notifications
 
 lessons_en/                     Teaching curriculum (22 English notebooks)
 ├── 01-python-basics/           Lessons 01-04 (no API keys needed)

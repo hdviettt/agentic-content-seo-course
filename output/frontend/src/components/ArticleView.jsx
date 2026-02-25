@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import ReactMarkdown from "react-markdown";
 import { getArticle } from "../api";
 import "./ArticleView.css";
@@ -6,6 +6,15 @@ import "./ArticleView.css";
 export default function ArticleView({ articleId, onBack }) {
   const [article, setArticle] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [copied, setCopied] = useState(false);
+
+  const copyMarkdown = useCallback(() => {
+    if (!article?.article_markdown) return;
+    navigator.clipboard.writeText(article.article_markdown).then(() => {
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    });
+  }, [article]);
 
   useEffect(() => {
     setLoading(true);
@@ -34,9 +43,14 @@ export default function ArticleView({ articleId, onBack }) {
   return (
     <div className="article-view">
       <div className="article-view-header">
-        <button className="article-view-back" onClick={onBack}>
-          &larr; Back to chat
-        </button>
+        <div className="article-view-actions">
+          <button className="article-view-back" onClick={onBack}>
+            &times; Close
+          </button>
+          <button className="article-view-copy" onClick={copyMarkdown}>
+            {copied ? "Copied!" : "Copy Markdown"}
+          </button>
+        </div>
         <div className="article-view-meta">
           <h1>{article.topic}</h1>
           <div className="article-view-info">

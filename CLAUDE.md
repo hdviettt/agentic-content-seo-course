@@ -19,7 +19,7 @@ jupyter notebook lessons_en/                             # Open teaching noteboo
 
 **`output/backend/serve.py`** — FastAPI backend via Agno's `AgentOS`. Wraps the team into a web server with 50+ auto-generated endpoints (SSE streaming, health check, Swagger docs at `/docs`). Custom routes for article CRUD (`/api/articles`). Run with `python output/backend/serve.py` (port 7777).
 
-**`output/frontend/`** — React + Vite single-page app. Chat with SSE streaming, article sidebar, full article viewer with Markdown rendering. Proxies API calls to the backend via Vite dev server (port 5173). Key components: `Chat.jsx` (streaming chat), `ArticleList.jsx` (sidebar), `ArticleView.jsx` (article reader).
+**`output/frontend/`** — React + Vite single-page app. Chat uses native AgentOS SSE endpoint (`/teams/seo-workspace/runs`) for real-time streaming. Article sidebar with NEW badges for freshly created articles. Toast notifications on article creation. Proxies API calls to the backend via Vite dev server (port 5173). Key components: `Chat.jsx` (SSE streaming + inline article cards), `ArticleList.jsx` (sidebar with NEW badges), `ArticleView.jsx` (article reader), `Toast.jsx` (notifications).
 
 ### Start script
 
@@ -80,9 +80,10 @@ agentic-content-seo/
 |           ├── App.jsx            Layout (sidebar + main area)
 |           ├── api.js             API client (fetch + SSE streaming)
 |           └── components/
-|               ├── Chat.jsx       Chat with SSE streaming + Markdown
-|               ├── ArticleList.jsx Sidebar article list (polling)
-|               └── ArticleView.jsx Full article viewer (Markdown)
+|               ├── Chat.jsx       Chat with SSE streaming + inline article cards
+|               ├── ArticleList.jsx Sidebar article list (polling + NEW badges)
+|               ├── ArticleView.jsx Full article viewer (Markdown)
+|               └── Toast.jsx      Toast notifications
 ├── content/                       <- Generated articles (.md files + articles.json)
 ├── lessons_en/                    <- Teaching curriculum (22 English notebooks)
 |   ├── 01-python-basics/          (01-04: no API keys needed)

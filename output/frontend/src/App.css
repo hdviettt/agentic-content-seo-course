@@ -4,8 +4,8 @@
 }
 
 .sidebar {
-  width: 300px;
-  min-width: 300px;
+  width: 260px;
+  min-width: 260px;
   background: var(--surface);
   border-right: 1px solid var(--border);
   display: flex;
@@ -14,16 +14,30 @@
 }
 
 .logo {
-  padding: 20px;
-  font-size: 18px;
-  font-weight: 700;
+  padding: 20px 20px;
+  font-size: 16px;
+  font-weight: 600;
+  letter-spacing: -0.01em;
   border-bottom: 1px solid var(--border);
-  color: var(--accent);
+  color: var(--text);
 }
 
 .main {
   flex: 1;
+  min-width: 0;
   display: flex;
   flex-direction: column;
   overflow: hidden;
+  background: var(--bg);
+}
+
+.article-panel {
+  width: 50%;
+  max-width: 700px;
+  min-width: 400px;
+  border-left: 1px solid var(--border);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  background: var(--surface);
 }
