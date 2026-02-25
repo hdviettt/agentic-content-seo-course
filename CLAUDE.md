@@ -5,9 +5,9 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 ## Commands
 
 ```bash
-python output/backend/serve.py                           # Start the web app (primary interface, port 7777)
-cd output/frontend && npm run dev                        # Start the frontend dev server (port 5173)
-python output/backend/chat.py                            # CLI alternative (same team, terminal interface)
+python output/start.py                                   # Start backend + frontend together (recommended)
+python output/backend/serve.py                           # Start backend only (port 7777)
+cd output/frontend && npm run dev                        # Start frontend only (port 5173)
 python -m pip install -r requirements.txt                # Install Python dependencies (pip not on PATH)
 cd output/frontend && npm install                        # Install frontend dependencies
 jupyter notebook lessons_en/                             # Open teaching notebooks (English)
@@ -21,9 +21,9 @@ jupyter notebook lessons_en/                             # Open teaching noteboo
 
 **`output/frontend/`** — React + Vite single-page app. Chat with SSE streaming, article sidebar, full article viewer with Markdown rendering. Proxies API calls to the backend via Vite dev server (port 5173). Key components: `Chat.jsx` (streaming chat), `ArticleList.jsx` (sidebar), `ArticleView.jsx` (article reader).
 
-### CLI interface (alternative)
+### Start script
 
-**`output/backend/chat.py`** — Terminal entry point (~40 lines). Validates Anthropic API key, imports team from `agents/team.py`, starts chat via `team.cli_app()`. Same team/agents/tools as the web interface. Chat history persisted in `chat_sessions.db` (SQLite, via Agno's `SqliteDb`).
+**`output/start.py`** — Launches both backend and frontend in one command. Validates API key, auto-installs frontend deps if needed, spawns both processes, handles Ctrl+C. Usage: `python output/start.py`.
 
 ### Agent definitions (`output/backend/agents/`) — "who"
 
@@ -45,7 +45,7 @@ Tools are capabilities that agents use. Custom toolkits inherit `agno.tools.Tool
 
 ### Storage layer (`output/backend/tools/storage.py`)
 
-Local file storage. Article IDs are **keyword slugs** (e.g., `"on-page-seo-meta-tags"`). Articles stored as `.md` files in `content/`, metadata in `content/articles.json`. No external services, no env vars needed for storage. SQLite is only used for Agno chat memory in `chat.py`.
+Local file storage. Article IDs are **keyword slugs** (e.g., `"on-page-seo-meta-tags"`). Articles stored as `.md` files in `content/`, metadata in `content/articles.json`. No external services, no env vars needed for storage. SQLite is only used for Agno chat memory (team session history).
 
 ### Teaching curriculum (`lessons_en/` and `lessons_vi/`)
 
@@ -56,9 +56,9 @@ Local file storage. Article IDs are **keyword slugs** (e.g., `"on-page-seo-meta-
 ```
 agentic-content-seo/
 ├── output/                        <- The finished product
-|   ├── backend/                   <- Python backend (12 files)
+|   ├── start.py                   Start backend + frontend together
+|   ├── backend/                   <- Python backend (11 files)
 |   |   ├── serve.py               Web backend entry point (AgentOS + article API)
-|   |   ├── chat.py                CLI entry point (~40 lines, validation + start)
 |   |   ├── agents/                Agent definitions (who)
 |   |   |   ├── __init__.py        Re-exports everything
 |   |   |   ├── content_writer.py  Content Writer (DataForSEO search + storage tools)

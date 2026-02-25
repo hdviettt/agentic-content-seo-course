@@ -1,7 +1,7 @@
 """
 SEO Workspace Team -- Sonnet leader orchestrating 3 Sonnet members.
 
-This assembles the conversational team used by chat.py.
+This assembles the conversational team used by serve.py.
 Uses task mode so the leader can run parallel tasks (e.g. batch article creation).
 """
 

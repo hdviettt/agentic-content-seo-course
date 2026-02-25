@@ -23,25 +23,11 @@ You need at minimum `ANTHROPIC_API_KEY`. Add `DATA_FOR_SEO_API_KEY` for web sear
 
 ## Usage
 
-### Web interface (primary)
-
 ```bash
-# Terminal 1 — Backend
-python output/backend/serve.py
-
-# Terminal 2 — Frontend
-cd output/frontend && npm install && npm run dev
+python output/start.py
 ```
 
-Open `http://localhost:5173` in your browser. Chat with the team, browse articles in the sidebar.
-
-### CLI interface (alternative)
-
-```bash
-python output/backend/chat.py
-```
-
-Same team, terminal interface. Useful for development and testing.
+This starts both backend (port 7777) and frontend (port 5173). Open `http://localhost:5173` in your browser. Ctrl+C stops both.
 
 ### What you can do
 
@@ -75,9 +61,9 @@ jupyter notebook lessons_vi/
 
 ```
 output/                         The finished product
-├── backend/                    Python backend (12 files)
+├── start.py                    Start backend + frontend together
+├── backend/                    Python backend (11 files)
 │   ├── serve.py                Web backend (AgentOS + article API, port 7777)
-│   ├── chat.py                 CLI entry point (~40 lines)
 │   ├── agents/                 Agent definitions (who)
 │   │   ├── __init__.py         Re-exports everything
 │   │   ├── content_writer.py   Content Writer (DataForSEO search + storage)
