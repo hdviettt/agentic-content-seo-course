@@ -217,6 +217,111 @@
   40% { transform: scale(1); }
 }
 
+/* AIO result card */
+.aio-card {
+  background: linear-gradient(135deg, rgba(74, 158, 255, 0.06) 0%, rgba(74, 158, 255, 0.02) 100%);
+  border: 1px solid rgba(74, 158, 255, 0.15);
+  border-radius: var(--radius-lg);
+  padding: 0;
+  margin: 20px 0;
+  overflow: hidden;
+  box-shadow:
+    0 0 20px rgba(74, 158, 255, 0.04),
+    0 4px 24px rgba(0, 0, 0, 0.3);
+}
+
+.aio-card-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 16px 20px;
+  background: rgba(74, 158, 255, 0.05);
+  border-bottom: 1px solid rgba(74, 158, 255, 0.1);
+}
+
+.aio-card-label {
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: #4a9eff;
+  background: rgba(74, 158, 255, 0.12);
+  padding: 3px 8px;
+  border-radius: 6px;
+  flex-shrink: 0;
+}
+
+.aio-card-keyword {
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--text);
+  letter-spacing: -0.01em;
+}
+
+.aio-card-content {
+  padding: 18px 20px;
+  font-size: 14px;
+  line-height: 1.8;
+  color: var(--text-secondary);
+  white-space: pre-wrap;
+}
+
+.aio-card-empty {
+  padding: 18px 20px;
+  font-size: 13.5px;
+  color: var(--text-muted);
+  margin: 0;
+  font-style: italic;
+}
+
+.aio-card-refs {
+  border-top: 1px solid rgba(74, 158, 255, 0.1);
+  padding: 14px 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.aio-card-refs-label {
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--text-muted);
+  margin-bottom: 6px;
+}
+
+.aio-card-ref {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 13px;
+  color: var(--text-secondary);
+  text-decoration: none;
+  padding: 6px 10px;
+  margin: 0 -10px;
+  border-radius: 8px;
+  transition: background 0.15s, color 0.15s;
+}
+
+.aio-card-ref:hover {
+  background: rgba(74, 158, 255, 0.08);
+  color: #4a9eff;
+}
+
+.aio-card-ref-source {
+  color: var(--text-muted);
+  font-size: 11px;
+  flex-shrink: 0;
+  min-width: 80px;
+}
+
+.aio-card-ref-title {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
 /* Inline article cards */
 .chat-article-cards {
   display: flex;

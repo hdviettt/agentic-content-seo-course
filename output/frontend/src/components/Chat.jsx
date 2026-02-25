@@ -3,11 +3,72 @@ import ReactMarkdown from "react-markdown";
 import { streamTeamRun } from "../api";
 import "./Chat.css";
 
-export default function Chat({ onRunComplete, newArticles, onSelectArticle }) {
+function AIOResultCard({ json }) {
+  let data;
+  try {
+    data = JSON.parse(json);
+  } catch {
+    return <pre>{json}</pre>;
+  }
+
+  if (!data.has_aio) {
+    return (
+      <div className="aio-card">
+        <div className="aio-card-header">
+          <span className="aio-card-label">AI Overview</span>
+          <span className="aio-card-keyword">{data.keyword}</span>
+        </div>
+        <p className="aio-card-empty">No AI Overview exists for this keyword.</p>
+      </div>
+    );
+  }
+
+  return (
+    <div className="aio-card">
+      <div className="aio-card-header">
+        <span className="aio-card-label">AI Overview</span>
+        <span className="aio-card-keyword">{data.keyword}</span>
+      </div>
+      <div className="aio-card-content">{data.content}</div>
+      {data.references?.length > 0 && (
+        <div className="aio-card-refs">
+          <span className="aio-card-refs-label">Sources</span>
+          {data.references.map((ref, i) => (
+            <a
+              key={i}
+              className="aio-card-ref"
+              href={ref.url}
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              <span className="aio-card-ref-source">{ref.source}</span>
+              <span className="aio-card-ref-title">{ref.title}</span>
+            </a>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
+
+const markdownComponents = {
+  pre({ children }) {
+    // Check if the child is a code element with aio-result language
+    const child = children?.props || {};
+    const className = child.className || "";
+    if (className.includes("language-aio-result")) {
+      const text = String(child.children || "").trim();
+      return <AIOResultCard json={text} />;
+    }
+    return <pre>{children}</pre>;
+  },
+};
+
+export default function Chat({ onRunComplete, onSelectArticle }) {
   const [messages, setMessages] = useState([]);
   const [input, setInput] = useState("");
   const [loading, setLoading] = useState(false);
-  const [articleCardIndices, setArticleCardIndices] = useState(new Set());
+  const [articleCardsMap, setArticleCardsMap] = useState({});
   const bottomRef = useRef(null);
   const streamingRef = useRef(false);
 
@@ -64,15 +125,14 @@ export default function Chat({ onRunComplete, newArticles, onSelectArticle }) {
         setLoading(false);
 
         if (onRunComplete) {
-          await onRunComplete();
-          setMessages((prev) => {
-            setArticleCardIndices((indices) => {
-              const next = new Set(indices);
-              next.add(prev.length - 1);
-              return next;
+          const created = await onRunComplete();
+          if (created && created.length > 0) {
+            setMessages((prev) => {
+              const msgIndex = prev.length - 1;
+              setArticleCardsMap((map) => ({ ...map, [msgIndex]: created }));
+              return prev;
             });
-            return prev;
-          });
+          }
         }
       },
       onError(err) {
@@ -109,16 +169,17 @@ export default function Chat({ onRunComplete, newArticles, onSelectArticle }) {
               </div>
               <div className="chat-msg-content">
                 {msg.role === "assistant" ? (
-                  <ReactMarkdown>{msg.content}</ReactMarkdown>
+                  <ReactMarkdown components={markdownComponents}>
+                    {msg.content}
+                  </ReactMarkdown>
                 ) : (
                   msg.content
                 )}
               </div>
               {msg.role === "assistant" &&
-                articleCardIndices.has(i) &&
-                newArticles?.length > 0 && (
+                articleCardsMap[i]?.length > 0 && (
                   <div className="chat-article-cards">
-                    {newArticles.map((a) => (
+                    {articleCardsMap[i].map((a) => (
                       <button
                         key={a.id}
                         className="chat-article-card"

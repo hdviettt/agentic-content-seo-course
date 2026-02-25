@@ -11,7 +11,6 @@ export default function App() {
   const [refreshKey, setRefreshKey] = useState(0);
   const [newArticleIds, setNewArticleIds] = useState(new Set());
   const [toast, setToast] = useState(null);
-  const [latestNewArticles, setLatestNewArticles] = useState([]);
   const knownIdsRef = useRef(new Set());
 
   // Populate known article IDs on mount
@@ -36,15 +35,16 @@ export default function App() {
           created.forEach((a) => next.add(a.id));
           return next;
         });
-        setLatestNewArticles(created);
         const noun = created.length === 1 ? "article" : "articles";
         setToast(`${created.length} ${noun} created`);
       }
 
       knownIdsRef.current = currentIds;
       setRefreshKey((k) => k + 1);
+      return created;
     } catch {
       setRefreshKey((k) => k + 1);
+      return [];
     }
   }, []);
 
@@ -66,7 +66,6 @@ export default function App() {
       <main className="main">
         <Chat
           onRunComplete={handleRunComplete}
-          newArticles={latestNewArticles}
           onSelectArticle={handleSelect}
         />
       </main>
