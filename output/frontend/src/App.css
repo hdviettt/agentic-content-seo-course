@@ -14,11 +14,35 @@
 }
 
 .logo {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
   padding: 20px 20px;
   font-size: 16px;
   font-weight: 600;
   letter-spacing: -0.01em;
   border-bottom: 1px solid var(--border);
+  color: var(--text);
+}
+
+.theme-toggle {
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  color: var(--text-secondary);
+  cursor: pointer;
+  font-size: 16px;
+  transition: border-color 0.15s, color 0.15s;
+  flex-shrink: 0;
+}
+
+.theme-toggle:hover {
+  border-color: var(--border-focus);
   color: var(--text);
 }
 

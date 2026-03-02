@@ -12,6 +12,16 @@ export default function App() {
   const [newArticleIds, setNewArticleIds] = useState(new Set());
   const [toast, setToast] = useState(null);
   const knownIdsRef = useRef(new Set());
+  const [theme, setTheme] = useState(() => localStorage.getItem('theme') || 'dark');
+
+  const toggleTheme = useCallback(() => {
+    setTheme((prev) => {
+      const next = prev === 'dark' ? 'light' : 'dark';
+      localStorage.setItem('theme', next);
+      document.documentElement.setAttribute('data-theme', next);
+      return next;
+    });
+  }, []);
 
   // Populate known article IDs on mount
   useEffect(() => {
@@ -67,7 +77,12 @@ export default function App() {
   return (
     <div className="app">
       <aside className="sidebar">
-        <h1 className="logo">SEO Workspace</h1>
+        <div className="logo">
+          <span>SEO Workspace</span>
+          <button className="theme-toggle" onClick={toggleTheme} title="Toggle theme">
+            {theme === 'dark' ? '\u2600' : '\u263E'}
+          </button>
+        </div>
         <ArticleList
           refreshKey={refreshKey}
           onSelect={handleSelect}

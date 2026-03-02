@@ -57,7 +57,7 @@
 }
 
 .article-view-copy:hover {
-  border-color: #333;
+  border-color: var(--border-focus);
   color: var(--text);
 }
 

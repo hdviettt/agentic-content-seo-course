@@ -56,9 +56,6 @@ export default function ArticleList({
             </div>
             <div className="article-card-meta">
               {a.word_count ? `${a.word_count} words` : ""}
-              {a.status && (
-                <span className={`badge badge--${a.status}`}>{a.status}</span>
-              )}
             </div>
             <button
               className="article-card-delete"

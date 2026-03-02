@@ -67,22 +67,22 @@
 }
 
 .badge--review {
-  background: rgba(245, 158, 11, 0.12);
-  color: #f59e0b;
+  background: var(--badge-review-bg);
+  color: var(--badge-review-text);
 }
 
 .badge--published {
-  background: rgba(34, 197, 94, 0.12);
-  color: #22c55e;
+  background: var(--badge-published-bg);
+  color: var(--badge-published-text);
 }
 
 .badge--draft {
-  background: rgba(99, 102, 241, 0.12);
-  color: #6366f1;
+  background: var(--badge-draft-bg);
+  color: var(--badge-draft-text);
 }
 
 .badge--new {
-  background: rgba(74, 158, 255, 0.15);
+  background: rgba(var(--accent-blue-rgb), 0.15);
   color: var(--accent-blue);
   animation: badge-pulse 2s ease-in-out 3;
 }
@@ -95,7 +95,7 @@
 /* Persistent highlight for session-created articles */
 .article-card--new {
   border-left: 2px solid var(--accent-blue);
-  background: rgba(74, 158, 255, 0.04);
+  background: rgba(var(--accent-blue-rgb), 0.04);
 }
 
 .article-card-delete {
